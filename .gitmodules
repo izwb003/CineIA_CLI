@@ -1,0 +1,3 @@
+[submodule "external/iab-renderer"]
+	path = external/iab-renderer
+	url = https://github.com/DTSProAudio/iab-renderer.git
