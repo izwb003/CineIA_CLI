@@ -16,8 +16,9 @@ int main() {
     // Make output file buffer
     vector<char> atmosBuffer;
     uint32_t atmosFileSize = 0;
+    iabError error;
     // Make conversion
-    reassembleIAB(imfInput, atmosBuffer, atmosFileSize);
+    error = reassembleIAB(imfInput, atmosBuffer, atmosFileSize);
     // Write output
     atmosOutput->write(atmosBuffer.data(), atmosFileSize);
     // Clean memory

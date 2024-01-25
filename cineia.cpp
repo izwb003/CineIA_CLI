@@ -6,6 +6,18 @@
 #include <packer/IABPacker.h>
 #include <common/IABElements.h>
 
+// ST 2098-2:2019 Table 18 AudioDataDLC Sample Count versus Frame Rate Code and Sample Rate
+int dlcSampleCountList[10][2] = {{2000, 4000},
+                                 {1920, 3840},
+                                 {1600, 3200},
+                                 {1000, 2000},
+                                 {960, 1920},
+                                 {800, 1600},
+                                 {500, 1000},
+                                 {480, 960},
+                                 {400, 800},
+                                 {2002, 4004}};
+
 void showError(iabError error) {
     if(error != kIABNoError) {
         std::cout<<error;
@@ -74,6 +86,7 @@ iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuf
      */
     IABAudioDataIDType bedDefinitionBedChannelAudioDataIDCounter = 100;
     IABAudioDataIDType objectDefinitionAudioDataIDCounter = 300;
+    std::vector<IABAudioDataDLC*>::iterator currentAudioDataDLCIterator;
 
     for(IABElement* iSubElement : iSubElements) {
         // Copy AudioData elements
@@ -104,6 +117,9 @@ iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuf
         }
         // Copy BedDefinition Element
         else if(IABBedDefinition* iBedDefinition = dynamic_cast<IABBedDefinition*>(iSubElement)) {
+            // Initialize oAudioDataDLC iterator
+            currentAudioDataDLCIterator = oAudioDataDLCs.begin();
+
             // Build output BedDefinition element
             IABBedDefinition* oBedDefinition = new IABBedDefinition(frameFrameRate);
 
@@ -138,9 +154,23 @@ iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuf
 
                 iBedDefinitionBedChannel->GetChannelID(channelID);
                 iBedDefinitionBedChannel->GetAudioDataID(channelAudioDataID);
-                if(channelAudioDataID != bedDefinitionBedChannelAudioDataIDCounter && channelAudioDataID != 0)
+                if(channelAudioDataID == bedDefinitionBedChannelAudioDataIDCounter) {
+                    bedDefinitionBedChannelAudioDataIDCounter ++;
+                    currentAudioDataDLCIterator ++;
+                }
+                else if(channelAudioDataID == 0) {
+                    channelAudioDataID = bedDefinitionBedChannelAudioDataIDCounter ++;
+                    IABAudioDataDLC* newAudioDataDLC = new IABAudioDataDLC(frameFrameRate, frameSampleRate, error);
+                    newAudioDataDLC->SetAudioDataID(channelAudioDataID);
+                    int32_t* muteSamples = new int32_t[dlcSampleCountList[frameFrameRate][frameSampleRate]]();
+                    newAudioDataDLC->EncodeMonoPCMToDLC(muteSamples, dlcSampleCountList[frameFrameRate][frameSampleRate]);
+                    delete[] muteSamples;
+                    if(error != kIABNoError) return error;
+                    currentAudioDataDLCIterator = oAudioDataDLCs.insert(currentAudioDataDLCIterator, newAudioDataDLC);
+                    currentAudioDataDLCIterator ++;
+                }
+                else
                     return kValidateErrorAudioDataDLCDuplicateAudioDataID;
-                channelAudioDataID = bedDefinitionBedChannelAudioDataIDCounter ++;
                 iBedDefinitionBedChannel->GetChannelGain(channelGain);
                 iBedDefinitionBedChannel->GetDecorInfoExists(channelDecorInfoExists);
 
@@ -170,9 +200,21 @@ iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuf
             IABUseCaseType objectDefinitionObjectUseCase;
 
             iObjectDefinition->GetAudioDataID(objectDefinitionAudioDataID);
-            if(objectDefinitionAudioDataID != objectDefinitionAudioDataIDCounter && objectDefinitionAudioDataID != 0)
+            if(objectDefinitionAudioDataID == objectDefinitionAudioDataIDCounter) {
+                objectDefinitionAudioDataIDCounter ++;
+            }
+            else if(objectDefinitionAudioDataID == 0) {
+                objectDefinitionAudioDataID = objectDefinitionAudioDataIDCounter ++;
+                IABAudioDataDLC* newAudioDataDLC = new IABAudioDataDLC(frameFrameRate, frameSampleRate, error);
+                newAudioDataDLC->SetAudioDataID(objectDefinitionAudioDataID);
+                int32_t* muteSamples = new int32_t[dlcSampleCountList[frameFrameRate][frameSampleRate]]();
+                newAudioDataDLC->EncodeMonoPCMToDLC(muteSamples, dlcSampleCountList[frameFrameRate][frameSampleRate]);
+                delete[] muteSamples;
+                if(error != kIABNoError) return error;
+                oAudioDataDLCs.push_back(newAudioDataDLC);
+            }
+            else
                 return kValidateErrorAudioDataDLCDuplicateAudioDataID;
-            objectDefinitionAudioDataID = objectDefinitionAudioDataIDCounter ++;
             iObjectDefinition->GetConditionalObject(objectDefinitionIsConditionalObject);
             iObjectDefinition->GetObjectUseCase(objectDefinitionObjectUseCase);
 
@@ -234,14 +276,6 @@ iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuf
         }
         else
             return kValidateErrorIAFrameUndefinedElementType;
-    }
-
-    // TODO: fill AudioDataID = 0's AudioDataDLC.
-
-    for(IABAudioDataDLC* element : oAudioDataDLCs) {
-        IABAudioDataIDType audioDataID;
-        element->GetAudioDataID(audioDataID);
-        std::cout<<audioDataID<<std::endl;
     }
 
     // Assemble output subelements vector
