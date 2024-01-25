@@ -19,6 +19,8 @@ int main() {
     iabError error;
     // Make conversion
     error = reassembleIAB(imfInput, atmosBuffer, atmosFileSize);
+    // Copy PreambleValue
+    copyPreambleValue(imfInput, atmosBuffer, atmosFileSize);
     // Write output
     atmosOutput->write(atmosBuffer.data(), atmosFileSize);
     // Clean memory

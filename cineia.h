@@ -14,6 +14,6 @@ void showError(iabError error);
 
 iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength);
 
-void copyPreambleValue(std::istream* iInputStream, std::ostream* oOutputStream);
+void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength);
 
 #endif //CINEIA_CLI_CINEIA_H

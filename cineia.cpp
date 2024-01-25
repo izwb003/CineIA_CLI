@@ -303,7 +303,27 @@ iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuf
 
     return kIABNoError;
 }
-/*
-void copyPreambleValue(std::istream *iInputStream, std::ostream *oOutputStream) {
+
+uint32_t reverseBytes(uint32_t value) {
+    return ((value >> 24) & 0x000000FF) |
+           ((value >> 8) & 0x0000FF00) |
+           ((value << 8) & 0x00FF0000) |
+           ((value << 24) & 0xFF000000);
 }
-*/
+
+void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength) {
+    // Copy PreambleLength
+    uint32_t preambleLength;
+    iIMFBuffer->seekg(1, std::ios::beg);
+    iIMFBuffer->read(reinterpret_cast<char*>(&preambleLength), 4);
+    std::copy(reinterpret_cast<char*>(&preambleLength), reinterpret_cast<char*>(&preambleLength) + 4, ioOutputBuffer.begin() + 1);
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    preambleLength = reverseBytes(preambleLength);
+#endif
+
+    // Copy PreambleValue
+    std::vector<char> preambleValue(preambleLength);
+    iIMFBuffer->read(preambleValue.data(), preambleLength);
+    ioOutputBuffer.insert(ioOutputBuffer.begin() + 5, preambleValue.begin(), preambleValue.end());
+    ioOutputLength += preambleLength;
+}
