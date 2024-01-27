@@ -19,18 +19,12 @@
  SOFTWARE.
  */
 
-#ifndef CINEIA_CLI_CINEIA_H
-#define CINEIA_CLI_CINEIA_H
+#include <iostream>
 
-#include <IABErrors.h>
-#include <common/IABElements.h>
+#include <AS_DCP.h>
 
-using namespace SMPTE::ImmersiveAudioBitstream;
+#include "cineia.h"
 
-void showError(iabError error);
+int main(int argc, const char* argv[]) {
 
-iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength);
-
-void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength);
-
-#endif //CINEIA_CLI_CINEIA_H
+}
