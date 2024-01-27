@@ -27,10 +27,30 @@
 
 using namespace SMPTE::ImmersiveAudioBitstream;
 
-void showError(iabError error);
+namespace CineIA {
+    struct iabFrameInfo {
+        IABFrameRateType frameRate;
+        IABSampleRateType sampleRate;
+        IABBitDepthType bitDepth;
+        IABMaxRenderedRangeType maxRendered;
+        uint32_t objectDefinitionCount = 0;
+        uint32_t bedDefinitionCount = 0;
+        uint32_t bedDefinitionChannelCount;
+    };
 
-iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength);
+    iabError getIABFrameInfo(std::stringstream *iInputStream, iabFrameInfo &oIABFrameInfo);
 
-void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength);
+    void showError(iabError error);
+
+    iabError reassembleIAB(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength);
+
+    void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength);
+
+    int convertFrameRate(IABFrameRateType iFrameRate);
+
+    int convertSampleRate(IABSampleRateType iSampleRate);
+
+    int convertBitDepth(IABBitDepthType iBitDepth);
+}
 
 #endif //CINEIA_CLI_CINEIA_H

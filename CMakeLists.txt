@@ -8,10 +8,8 @@ include_directories(external/iab-renderer/src/lib)
 
 # Include asdcplib library
 add_subdirectory(external/asdcplib)
-option(WITHOUT_SSL ON)
-option(WITHOUT_XML ON)
 if(WIN32)
-    add_definitions(-DKM_WIN32)
+    add_definitions(/DKM_WIN32)
 endif()
 include_directories(external/asdcplib/src)
 
@@ -26,3 +24,10 @@ target_link_libraries(CineIA PUBLIC IABLib)
 # Build executable
 add_executable(cineia main.cpp)
 target_link_libraries(cineia PUBLIC CineIA libkumu libasdcp libas02)
+
+# Pass version number
+target_compile_definitions(cineia PRIVATE
+    PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+    PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+    PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+)

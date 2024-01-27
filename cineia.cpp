@@ -38,14 +38,45 @@ int dlcSampleCountList[10][2] = {{2000, 4000},
                                  {400, 800},
                                  {2002, 4004}};
 
-void showError(iabError error) {
+iabError CineIA::getIABFrameInfo(std::stringstream *iInputStream, iabFrameInfo &oIABFrameInfo) {
+    iabError error = kIABNoError;
+    IABParser parser(iInputStream);
+
+    error = parser.ParseIABFrame();
+    const IABFrameInterface* parsedFrame;
+    error = parser.GetIABFrame(parsedFrame);
+    if(error != kIABNoError) return error;
+
+    parsedFrame->GetSampleRate(oIABFrameInfo.sampleRate);
+    parsedFrame->GetMaxRendered(oIABFrameInfo.maxRendered);
+    parsedFrame->GetFrameRate(oIABFrameInfo.frameRate);
+    parsedFrame->GetBitDepth(oIABFrameInfo.bitDepth);
+
+    std::vector<IABElement*> subElements;
+    parsedFrame->GetSubElements(subElements);
+
+    for(IABElement* subElement : subElements) {
+        if(IABBedDefinition* bedDefinition = dynamic_cast<IABBedDefinition*>(subElement)) {
+            oIABFrameInfo.bedDefinitionCount ++;
+            IABChannelCountType bedDefinitionChannelCount;
+            bedDefinition->GetChannelCount(bedDefinitionChannelCount);
+            oIABFrameInfo.bedDefinitionChannelCount = (uint32_t)bedDefinitionChannelCount;
+        }
+        else if(IABObjectDefinition* objectDefinition = dynamic_cast<IABObjectDefinition*>(subElement))
+            oIABFrameInfo.objectDefinitionCount ++;
+    }
+
+    return error;
+}
+
+void CineIA::showError(iabError error) {
     if(error != kIABNoError) {
         std::cout<<error;
         exit(error);
     }
 }
 
-iabError reassembleIAB(std::istream* iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength) {
+iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength) {
     // Error variable
     iabError error = kIABNoError;
 
@@ -331,7 +362,7 @@ uint32_t reverseBytes(uint32_t value) {
            ((value << 24) & 0xFF000000);
 }
 
-void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength) {
+void CineIA::copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength) {
     // Copy PreambleLength
     uint32_t preambleLength;
     iIMFBuffer->seekg(1, std::ios::beg);
@@ -346,4 +377,54 @@ void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuff
     iIMFBuffer->read(preambleValue.data(), preambleLength);
     ioOutputBuffer.insert(ioOutputBuffer.begin() + 5, preambleValue.begin(), preambleValue.end());
     ioOutputLength += preambleLength;
+}
+
+int CineIA::convertFrameRate(IABFrameRateType iFrameRate) {
+    switch(iFrameRate) {
+        case kIABFrameRate_24FPS:
+            return 24;
+        case kIABFrameRate_25FPS:
+            return 25;
+        case kIABFrameRate_30FPS:
+            return 30;
+        case kIABFrameRate_48FPS:
+            return 48;
+        case kIABFrameRate_50FPS:
+            return 50;
+        case kIABFrameRate_60FPS:
+            return 60;
+        case kIABFrameRate_96FPS:
+            return 96;
+        case kIABFrameRate_100FPS:
+            return 100;
+        case kIABFrameRate_120FPS:
+            return 120;
+        default:
+            return 0;
+    }
+    return 0;
+}
+
+int CineIA::convertSampleRate(IABSampleRateType iSampleRate) {
+    switch(iSampleRate) {
+        case kIABSampleRate_48000Hz:
+            return 48000;
+        case kIABSampleRate_96000Hz:
+            return 96000;
+        default:
+            return 0;
+    }
+    return 0;
+}
+
+int CineIA::convertBitDepth(IABBitDepthType iBitDepth) {
+    switch(iBitDepth) {
+        case kIABBitDepth_16Bit:
+            return 16;
+        case kIABBitDepth_24Bit:
+            return 24;
+        default:
+            return 0;
+    }
+    return 0;
 }
