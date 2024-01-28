@@ -21,7 +21,7 @@
 
 #include "cineia.h"
 
-// Because provided APIs are too simple, we choose not to use them.
+// Because provided APIs of IABLib are too simple, we choose not to use them.
 #include <parser/IABParser.h>
 #include <packer/IABPacker.h>
 #include <common/IABElements.h>
@@ -38,7 +38,7 @@ int dlcSampleCountList[10][2] = {{2000, 4000},
                                  {400, 800},
                                  {2002, 4004}};
 
-iabError CineIA::getIABFrameInfo(std::stringstream *iInputStream, iabFrameInfo &oIABFrameInfo) {
+iabError CineIA::getIABFrameInfo(std::istream *iInputStream, iabFrameInfo &oIABFrameInfo) {
     iabError error = kIABNoError;
     IABParser parser(iInputStream);
 

@@ -38,7 +38,7 @@ namespace CineIA {
         uint32_t bedDefinitionChannelCount;
     };
 
-    iabError getIABFrameInfo(std::stringstream *iInputStream, iabFrameInfo &oIABFrameInfo);
+    iabError getIABFrameInfo(std::istream *iInputStream, iabFrameInfo &oIABFrameInfo);
 
     void showError(iabError error);
 

@@ -27,6 +27,12 @@
 
 #include "cineia.h"
 
+// AS-DCP Program information
+static byte_t productUUID[UUIDlen] = {0x78, 0x0F, 0x58, 0xED, 0x3D, 0x9F, 0x3F, 0xB8, 0xDB, 0x81, 0xC0, 0xDF, 0x9E, 0x61, 0x8C, 0x3F};
+static std::string companyName = "CineIA " + std::to_string(PROJECT_VERSION_MAJOR) + "." + std::to_string(PROJECT_VERSION_MINOR) + "." + std::to_string(PROJECT_VERSION_PATCH);
+static std::string productName = "asdcplib";
+static std::string productVersion = ASDCP::Version();
+
 // Console color definition
 #define NONE         "\033[m"
 #define RED          "\033[0;32;31m"
@@ -180,9 +186,9 @@ struct cmdSettings {
 
 bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings) {
     if(argc == 1) {
-        printf(RED" Error:" NONE);
-        printf(" No command line parameters were read.\n");
-        printf(" \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " No command line parameters were read.\n");
+        fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
         return false;
     }
 
@@ -204,24 +210,23 @@ bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings
         else if(!settings.inputFileName.empty() && settings.outputFileName.empty())
             settings.outputFileName = std::string(argv[parseCmd]);
         else {
-            printf(RED" Error:" NONE);
-            printf(" Invalid argument: %s.\n", argv[parseCmd]);
-            printf(" \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
+            fprintf(stderr, RED" Error:" NONE);
+            fprintf(stderr, " Invalid argument: %s.\n", argv[parseCmd]);
+            fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
             return false;
         }
     }
 
     if(settings.inputFileName.empty() || settings.outputFileName.empty()) {
-        printf(RED" Error:" NONE);
-        printf(" No input or output file specified.\n"
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " No input or output file specified.\n"
                " \tBoth must be specified simultaneously.\n");
         return false;
     }
     return true;
 }
 
-std::string generateDuration(uint32_t frameCount, uint32_t frameRate) {
-    uint32_t seconds = frameCount / frameRate;
+std::string generateDuration(uint32_t seconds) {
     uint32_t hours = seconds / 3600;
     uint32_t minutes = (seconds % 3600) / 60;
     uint32_t remainingSeconds = seconds % 60;
@@ -248,8 +253,8 @@ int main(int argc, const char* argv[]) {
     AS_02::IAB::MXFReader reader;
     result = reader.OpenRead(settings.inputFileName);
     if(result.Failure()) {
-        printf(RED" Error:" NONE);
-        printf(" Unable to open input file: %s", settings.inputFileName.c_str());
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Unable to open input file: %s", settings.inputFileName.c_str());
         return -2;
     }
 
@@ -257,8 +262,8 @@ int main(int argc, const char* argv[]) {
     ASDCP::WriterInfo iInfo;
     result = reader.FillWriterInfo(iInfo);
     if(result.Failure()) {
-        printf(RED" Error:" NONE);
-        printf(" Unable to parse input file info.");
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Unable to parse input file info.");
         return -3;
     }
 
@@ -275,25 +280,25 @@ int main(int argc, const char* argv[]) {
     CineIA::iabFrameInfo iFrameInfo;
     result = reader.ReadFrame(0, iFrame);
     if(result.Failure()) {
-        printf(RED" Error:" NONE);
-        printf(" Unable to read IAB frames.");
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Unable to read IAB frames.");
         return -4;
     }
     iFrameStream.write((const char*)iFrame.second, iFrame.first);
 
-    std::ofstream test("test.bin", std::ios::binary);
-    test.write((char*)iFrame.second, iFrame.first);
-
     if(CineIA::getIABFrameInfo(&iFrameStream, iFrameInfo) != kIABNoError) {
-        printf(RED" Error:" NONE);
-        printf(" Failed to get IAB frames' info. The IABFrame may has error.");
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Failed to get IAB frames' info. The IABFrame may has error.");
         return -4;
     }
 
+    // TODO: Add a validator. May need DTSProAudio/iab-validator?
+
+    // Show IAB info
     printf("\t\t\tIAB info\n");
     printf("======================================================================\n");
     printf("\tFrame count\t\t\t%d\n", frameCount);
-    printf("\tDuration\t\t\t%s\n", generateDuration(frameCount, (uint32_t)CineIA::convertFrameRate(iFrameInfo.frameRate)).c_str());
+    printf("\tDuration\t\t\t%s\n", generateDuration(frameCount / (uint32_t)CineIA::convertFrameRate(iFrameInfo.frameRate)).c_str());
     printf("\tFrame rate\t\t\t%dfps\n", CineIA::convertFrameRate(iFrameInfo.frameRate));
     printf("\tAudio sample rate\t\t%dHz\n", CineIA::convertSampleRate(iFrameInfo.sampleRate));
     printf("\tAudio bit depth\t\t\t%dbits\n", CineIA::convertBitDepth(iFrameInfo.bitDepth));
@@ -302,6 +307,123 @@ int main(int argc, const char* argv[]) {
     printf("\tBed channel count\t\t%d\n", iFrameInfo.bedDefinitionChannelCount);
     printf("\tObject count\t\t\t%d\n", iFrameInfo.objectDefinitionCount);
     printf("======================================================================\n\n");
+
+    // Begin conversion
+    printf("Converting %s ...\n", settings.inputFileName.c_str());
+
+    // Create DCP writer
+    uint32_t outputFileSize = 0;
+
+    ASDCP::ATMOS::MXFWriter writer;
+    ASDCP::WriterInfo oInfo;
+    ASDCP::ATMOS::AtmosDescriptor oDescriptor;
+
+    oInfo.CompanyName = companyName;
+    oInfo.ProductName = productName;
+    oInfo.ProductVersion = productVersion;
+    memcpy(oInfo.ProductUUID, productUUID, UUIDlen);
+    Kumu::GenRandomUUID(oInfo.AssetUUID);
+    oInfo.LabelSetType = LS_MXF_SMPTE;
+
+    Kumu::GenRandomUUID(oDescriptor.AtmosID);
+    oDescriptor.AtmosVersion = 1;
+    oDescriptor.FirstFrame = 0;
+    oDescriptor.MaxChannelCount = 10;
+    oDescriptor.MaxObjectCount = 118;
+    oDescriptor.ContainerDuration = frameCount;
+    oDescriptor.EditRate = ASDCP::Rational(CineIA::convertFrameRate(iFrameInfo.frameRate), 1);
+
+    result = writer.OpenWrite(settings.outputFileName, oInfo, oDescriptor);
+    if(result.Failure()) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Unable to write IAB frames.");
+        return -4;
+    }
+
+    // Conversion
+    for(uint32_t frameNum = 0; frameNum < frameCount; frameNum ++) {
+        printf("\033[2K\r");
+        float percent = (float)frameNum / (float)frameCount;
+        printf("Frame:%d/%d  Size:%dkB  Progress:%.1f%%...", frameNum + 1, frameCount, outputFileSize / 1000, percent * 100);
+
+        AS_02::IAB::MXFReader::Frame iFrameWrite;
+        std::stringstream iFrameStreamWrite;
+        std::vector<char> oFrameWrite;
+        DCData::FrameBuffer oFrameBuffer(4 * Kumu::Kilobyte);
+        uint32_t oFrameWriteLength;
+
+        result = reader.ReadFrame(frameNum, iFrameWrite);
+        if(result.Failure()) {
+            printf("\n");
+            fprintf(stderr, RED" Error:" NONE);
+            fprintf(stderr, " Unable to read IAB frame %d.", frameNum);
+            return -4;
+        }
+
+        iFrameStreamWrite.write((const char*)iFrameWrite.second, iFrameWrite.first);
+
+        iabError error = kIABNoError;
+
+        error = CineIA::reassembleIAB(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
+        if(error != kIABNoError) {
+            printf("\n");
+            switch(error) {
+                case kValidateErrorAudioDataDLCDuplicateAudioDataID:
+                    fprintf(stderr, RED" Error:" NONE);
+                    fprintf(stderr, " Unknown AudioDataID in frame %d.\n", frameNum);
+                    fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
+                    fprintf(stderr, " To generate the IMF IAB file and try again.\n");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    return -6;
+                case kValidateErrorIAFrameUndefinedElementType:
+                    fprintf(stderr, RED" Error:" NONE);
+                    fprintf(stderr, " Unknown IABFrame SubElement type found in frame %d.\n", frameNum);
+                    fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
+                    fprintf(stderr, " To generate the IMF IAB file and try again.\n");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    return -7;
+                default:
+                    fprintf(stderr, RED" Error:" NONE);
+                    fprintf(stderr, " Unknown error occured in frame %d. ErrorID: %d.\n", frameNum, error);
+                    fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
+                    fprintf(stderr, " To generate the IMF IAB file and try again.\n");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    return -8;
+            }
+        }
+
+        if(settings.copyPreambleValue)
+            CineIA::copyPreambleValue(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
+
+        outputFileSize += oFrameWriteLength;
+
+        oFrameBuffer.FrameNumber(frameNum);
+        oFrameBuffer.SetData((byte_t*)oFrameWrite.data(), oFrameWriteLength);
+        oFrameBuffer.Size(oFrameWriteLength);
+        writer.WriteFrame(oFrameBuffer);
+    }
+
+    printf(GREEN"   Completed.\n" NONE);
+
+    printf("Closing files...");
+
+    // Close IMF reader
+    result = reader.Close();
+    if(result.Failure()) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Unable to close input file.");
+        return -5;
+    }
+
+    // Close DCP writer
+    result = writer.Finalize();
+    if(result.Failure()) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Unable to close output file.");
+        return -5;
+    }
+
+    printf(GREEN"   Completed.\n" NONE);
 
     return 0;
 }
