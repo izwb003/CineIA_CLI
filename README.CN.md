@@ -16,7 +16,7 @@ CineIA是一个重新编码工具，旨在制作符合这些约束的沉浸式�
 CineIA_CLI是一个命令行工具。参数帮助如下（```cineia -h```）：
 
 ```
-用法: cineia [-n] [-f] <input file path> <output file path> [-l] [-h]
+用法: cineia [-n] [-f] [-c <number>] [-o <number>] <input file path> <output file path> [-l] [-h]
 
 <input file path>: 要转换的IMF IAB文件的完整或相对路径。
 <output file path>: 输出的DCP IAB文件的完整或相对路径。
@@ -29,6 +29,10 @@ CineIA_CLI是一个命令行工具。参数帮助如下（```cineia -h```）：
 -f, --force-dolby-constraint 调整比特流，使其强制符合杜比约束。
                              如果输出比特流会导致错误，尝试添加此选项重新编码。
                              但它可能导致比特流工作不正常。
+-c, --set-channels <number>  设置MXF AtmosDescriptor记录的音床声道数。
+                             除非遇到问题，否则请勿修改。
+-o, --set-objects <number>   设置MXF AtmosDescriptor记录的声音对象数。
+                             除非遇到问题，否则请勿修改。
 -l,     --show-licenses      显示开放源代码许可并退出。
 -h,     --help               显示此帮助信息并退出。
 ```
@@ -85,8 +89,10 @@ IMF IAB，定义于[ST 2067-201](https://doi.org/10.5594/SMPTE.ST2067-201.2019)�
 
 此外，比特流需要一段名为“前序”（```Preamble```）（在早期25CSS讨论中也被称为```IABPCMSubFrame```）的部分。其包含一段一般为1603字节的数据用于在杜比全景声®比特流解码运行的过程中实时监视正确进行的渲染。这一部分的定义及规范尚未公开。故此，必须使用IMF IAB格式，以将编码IMF IAB时由编码器（如Dolby Atmos Storage System IDK）生成的该部分复制到生成的DCP IAB中。否则，生成的DCP IAB在播放时可能因为错误的监视导致故障（如声音对象错位等异常）。
 
-## 开放源代码许可
+## 开放源代码许可与致谢
 CineIA的诞生离不开[asdcplib](https://github.com/cinecert/asdcplib)库和[iab-renderer](https://github.com/DTSProAudio/iab-renderer)库。这些库在CineIA中完成了大部分的实现。请确保参阅这些库的开源协议。
+
+CineIA的开发与调试离不开[@筱理_Rize](https://space.bilibili.com/3848521/)和[@神奇的红毛丹](https://space.bilibili.com/364856318)的鼓励和支持，及[@冷小鸢aque](https://space.bilibili.com/27063907)不辞辛劳地联系协助进行实地测试。
 
 CineIA_CLI是在[MIT许可证](https://opensource.org/license/mit/)下开源的开源项目。
 
