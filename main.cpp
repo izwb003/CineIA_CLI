@@ -72,7 +72,7 @@ void showProgramInfo() {
 }
 
 void showHelp() {
-    printf("Usage: cineia [-n] [-f] <input file path> <output file path> [-l] [-h]\n\n"
+    printf("Usage: cineia [-n] [-f] [-c <number>] [-o <number>] <input file path> <output file path> [-l] [-h]\n\n"
            "<input file path>: Full or relative path to the IMF IAB file for conversion.\n"
            "<output file path>: Full or relative path to the DCP IAB file output.\n\n\n"
 
@@ -82,6 +82,10 @@ void showHelp() {
            "-f,\t--force-dolby-constraint\tModify the bitstream to ensure that every detail conforms to the Dolby constraint.\n"
            "\t\t\t\t\tTry using this argument if the output bitstream causes error,\n"
            "\t\t\t\t\tbut it may cause the bitstream to not work as expected.\n"
+           "-c,\t--set-channels <number>\t\tSet the bed channel number in MXF AtmosDescriptor.\n"
+           "\t\t\t\t\tDo not set unless you meet some problem.\n"
+           "-o,\t--set-objects <number>\t\tSet the object number in MXF AtmosDescriptor.\n"
+           "\t\t\t\t\tDo not set unless you meet some problem.\n"
            "-l,\t--show-licenses\t\t\tShow open-source licenses and quit.\n"
            "-h,\t--help\t\t\t\tPrint this help message and quit.\n"
     );
@@ -180,6 +184,8 @@ void showLicense() {
 struct cmdSettings {
     bool copyPreambleValue = true;
     bool forceDolbyConstraint = false;
+    ui16_t bedChannelCount = 10;
+    ui16_t objectCount = 118;
     std::string inputFileName;
     std::string outputFileName;
 };
@@ -205,10 +211,54 @@ bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings
             settings.copyPreambleValue = false;
         else if(std::string(argv[parseCmd]) == "-f" || std::string(argv[parseCmd]) == "--force-dolby-constraint")
             settings.forceDolbyConstraint = true;
-        else if(settings.inputFileName.empty())
+        else if(std::string(argv[parseCmd]) == "-c" || std::string(argv[parseCmd]) == "--set-channels") {
+            try {
+                settings.bedChannelCount = std::stoi(std::string(argv[++ parseCmd]));
+            }
+            catch(const std::invalid_argument& error) {
+                fprintf(stderr, RED" Error:" NONE);
+                fprintf(stderr, " Invalid argument: %s.\n", argv[parseCmd]);
+                fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
+                return false;
+            }
+            catch(const std::out_of_range& error) {
+                fprintf(stderr, RED" Error:" NONE);
+                fprintf(stderr, " Invalid argument: %s.\n", argv[parseCmd]);
+                fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
+                return false;
+            }
+        }
+        else if(std::string(argv[parseCmd]) == "-o" || std::string(argv[parseCmd]) == "--set-objects") {
+            try {
+                settings.objectCount = std::stoi(std::string(argv[++ parseCmd]));
+            }
+            catch(const std::invalid_argument& error) {
+                fprintf(stderr, RED" Error:" NONE);
+                fprintf(stderr, " Invalid argument: %s.\n", argv[parseCmd]);
+                fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
+                return false;
+            }
+            catch(const std::out_of_range& error) {
+                fprintf(stderr, RED" Error:" NONE);
+                fprintf(stderr, " Invalid argument: %s.\n", argv[parseCmd]);
+                fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
+                return false;
+            }
+        }
+        else if(settings.inputFileName.empty()) {
             settings.inputFileName = std::string(argv[parseCmd]);
-        else if(!settings.inputFileName.empty() && settings.outputFileName.empty())
+            if(settings.inputFileName.length() < std::string(".mxf").length() ||
+               settings.inputFileName.compare(settings.inputFileName.length() - std::string(".mxf").length(),
+                                              std::string(".mxf").length(), std::string(".mxf")) != 0)
+                settings.inputFileName.append(".mxf");
+        }
+        else if(!settings.inputFileName.empty() && settings.outputFileName.empty()) {
             settings.outputFileName = std::string(argv[parseCmd]);
+            if(settings.outputFileName.length() < std::string(".mxf").length() ||
+               settings.outputFileName.compare(settings.outputFileName.length() - std::string(".mxf").length(),
+                                               std::string(".mxf").length(), std::string(".mxf")) != 0)
+                settings.outputFileName.append(".mxf");
+        }
         else {
             fprintf(stderr, RED" Error:" NONE);
             fprintf(stderr, " Invalid argument: %s.\n", argv[parseCmd]);
@@ -328,8 +378,8 @@ int main(int argc, const char* argv[]) {
     Kumu::GenRandomUUID(oDescriptor.AtmosID);
     oDescriptor.AtmosVersion = 1;
     oDescriptor.FirstFrame = 0;
-    oDescriptor.MaxChannelCount = 10;
-    oDescriptor.MaxObjectCount = 118;
+    oDescriptor.MaxChannelCount = settings.bedChannelCount;
+    oDescriptor.MaxObjectCount = settings.objectCount;
     oDescriptor.ContainerDuration = frameCount;
     oDescriptor.EditRate = ASDCP::Rational(CineIA::convertFrameRate(iFrameInfo.frameRate), 1);
 
