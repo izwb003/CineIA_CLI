@@ -17,10 +17,6 @@ include_directories(external/asdcplib/src)
 add_library(CineIA cineia.h cineia.cpp)
 target_link_libraries(CineIA PUBLIC IABLib)
 
-# Build test
-# add_executable(test test.h test.cpp)
-# target_link_libraries(test PUBLIC CineIA)
-
 # Build executable
 add_executable(cineia main.cpp)
 target_link_libraries(cineia PUBLIC CineIA libkumu libasdcp libas02)
