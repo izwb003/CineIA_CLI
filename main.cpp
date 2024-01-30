@@ -28,7 +28,7 @@
 #include "cineia.h"
 
 // AS-DCP Program information
-static byte_t productUUID[UUIDlen] = {0x78, 0x0F, 0x58, 0xED, 0x3D, 0x9F, 0x3F, 0xB8, 0xDB, 0x81, 0xC0, 0xDF, 0x9E, 0x61, 0x8C, 0x3F};
+static byte_t productUUID[ASDCP::UUIDlen] = {0x78, 0x0F, 0x58, 0xED, 0x3D, 0x9F, 0x3F, 0xB8, 0xDB, 0x81, 0xC0, 0xDF, 0x9E, 0x61, 0x8C, 0x3F};
 static std::string companyName = "CineIA " + std::to_string(PROJECT_VERSION_MAJOR) + "." + std::to_string(PROJECT_VERSION_MINOR) + "." + std::to_string(PROJECT_VERSION_PATCH);
 static std::string productName = "asdcplib";
 static std::string productVersion = ASDCP::Version();
@@ -408,9 +408,9 @@ int main(int argc, const char* argv[]) {
     oInfo.CompanyName = companyName;
     oInfo.ProductName = productName;
     oInfo.ProductVersion = productVersion;
-    memcpy(oInfo.ProductUUID, productUUID, UUIDlen);
+    memcpy(oInfo.ProductUUID, productUUID, ASDCP::UUIDlen);
     Kumu::GenRandomUUID(oInfo.AssetUUID);
-    oInfo.LabelSetType = LS_MXF_SMPTE;
+    oInfo.LabelSetType = ASDCP::LS_MXF_SMPTE;
 
     Kumu::GenRandomUUID(oDescriptor.AtmosID);
     oDescriptor.AtmosVersion = 1;
@@ -436,7 +436,7 @@ int main(int argc, const char* argv[]) {
         AS_02::IAB::MXFReader::Frame iFrameWrite;
         std::stringstream iFrameStreamWrite;
         std::vector<char> oFrameWrite;
-        DCData::FrameBuffer oFrameBuffer(4 * Kumu::Kilobyte);
+        ASDCP::DCData::FrameBuffer oFrameBuffer(4 * Kumu::Kilobyte);
         uint32_t oFrameWriteLength;
 
         result = reader.ReadFrame(frameNum, iFrameWrite);
