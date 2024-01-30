@@ -6,7 +6,7 @@ Command line tool for encoding IMF IAB into Atmos compatible DCP IAB.
 ## Introduction
 
 ### Background
-Dolby Atmos® Greatly enhanced the immersive experience in cinemas. However, The production of Atmos contents in cinema DCP (Atmos copy) requires the use of Dolby specific tools or RMU. That is to say, there are currently no publicly accessible tools available for making Atmos copies. This poses an obstacle to fully utilizing the capabilities of a Atmos theater in situations where it is necessary to play self-made cinema content, such as movie viewing events.
+Dolby Atmos® greatly enhanced the immersive experience in cinemas. However, The production of Atmos contents in cinema DCP (Atmos copy) requires the use of Dolby specific tools or RMU. That is to say, there are currently no publicly accessible tools available for making Atmos copies. This poses an obstacle to fully utilizing the capabilities of a Atmos theater in situations where it is necessary to play self-made cinema content, such as movie viewing events.
 
 However, SMPTE®'s new standard for the release of immersive audio content in next-generation cinemas - Immersive Audio Bitstream (IAB), also known as [ST 2098](https://doi.org/10.5594/SMPTE.ST2098-2.2019) series standards fully disclose Dolby Atmos® technical details from a lateral perspective. Some registration disclosure documents, such as [RDD 29](https://doi.org/10.5594/SMPTE.RDD29.2019), [RDD 57](https://doi.org/10.5594/SMPTE.RDD57.2021) also disclosed the constraints of Dolby Atmos® bitstream.
 
