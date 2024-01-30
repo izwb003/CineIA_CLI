@@ -524,7 +524,7 @@ int main(int argc, const char* argv[]) {
 
     printf(YELLOW" Note:" NONE);
     printf(" Please make sure that you've checked the output file before merging\n"
-           " it into a DCP.");
+           " it into a DCP.\n\n");
 
     return 0;
 }
