@@ -358,6 +358,43 @@ int main(int argc, const char* argv[]) {
     printf("\tObject count\t\t\t%d\n", iFrameInfo.objectDefinitionCount);
     printf("======================================================================\n\n");
 
+    // Check Dolby constraint
+    if(iFrameInfo.maxRendered > 128) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " More than 128 audios were found. Atmos does not support so many.");
+        return -10;
+    }
+
+    if(iFrameInfo.bedDefinitionCount != 1) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " No or too many beds were found. Atmos requires only one 9.1(7.1.2) bed.");
+        return -11;
+    }
+
+    if(iFrameInfo.bedDefinitionChannelCount != 10) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " The bed contains %d channels. Atmos requires only one 9.1(7.1.2) bed.", iFrameInfo.bedDefinitionChannelCount);
+        return -12;
+    }
+
+    if(iFrameInfo.objectDefinitionCount > 118) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " More than 118 objects were found. Atmos requires less than 118 audio objects.");
+        return -13;
+    }
+
+    if(CineIA::convertBitDepth(iFrameInfo.bitDepth) != 24) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Cinema Atmos requires 24bits audio bit depth.");
+        return -14;
+    }
+
+    if(CineIA::convertFrameRate(iFrameInfo.frameRate) == 23) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " Cinema Atmos does not support 23.976fps frame rate.");
+        return -15;
+    }
+
     // Begin conversion
     printf("Converting %s ...\n", settings.inputFileName.c_str());
 
@@ -413,8 +450,11 @@ int main(int argc, const char* argv[]) {
         iFrameStreamWrite.write((const char*)iFrameWrite.second, iFrameWrite.first);
 
         iabError error = kIABNoError;
+        if(!settings.forceDolbyConstraint)
+            error = CineIA::reassembleIAB(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
+        else
+            error = CineIA::reassembleIABDolby(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
 
-        error = CineIA::reassembleIAB(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
         if(error != kIABNoError) {
             printf("\n");
             switch(error) {
@@ -432,6 +472,13 @@ int main(int argc, const char* argv[]) {
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
                     fprintf(stderr, " If the error still occurs, please share your file with the developer.");
                     return -7;
+                case kIABPackerObjectSpreadModeError:
+                    fprintf(stderr, RED" Error:" NONE);
+                    fprintf(stderr, " Unsupported ObjectSpreadMode found in frame %d.\n", frameNum);
+                    fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
+                    fprintf(stderr, " To generate the IMF IAB file and try again.\n");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    return -15;
                 default:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unknown error occured in frame %d. ErrorID: %d.\n", frameNum, error);
@@ -473,7 +520,11 @@ int main(int argc, const char* argv[]) {
         return -5;
     }
 
-    printf(GREEN"   Completed.\n" NONE);
+    printf(GREEN"   Completed.\n\n" NONE);
+
+    printf(YELLOW" Note:" NONE);
+    printf(" Please make sure that you've checked the output file before merging\n"
+           " it into a DCP.");
 
     return 0;
 }

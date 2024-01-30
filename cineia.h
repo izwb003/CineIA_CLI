@@ -44,6 +44,8 @@ namespace CineIA {
 
     iabError reassembleIAB(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength);
 
+    iabError reassembleIABDolby(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength);
+
     void copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOutputBuffer, uint32_t &ioOutputLength);
 
     int convertFrameRate(IABFrameRateType iFrameRate);
