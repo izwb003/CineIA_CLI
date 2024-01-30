@@ -38,7 +38,7 @@ CineIA_CLI是一个命令行工具。参数帮助如下（```cineia -h```）：
 ```
 
 ### 使用方法
-该工具接受可互操作媒体格式（IMF）包的IAB资源作为输入。输入内容需要符合[杜比IMF IAB指导约束](https://professionalsupport.dolby.com/s/article/Dolby-Atmos-IMF-IAB-interoperability-guidelines?language=en_US)。大多数杜比全景声®渲染器可以生成此类文件。
+该工具接受可互操作母版格式（IMF）包的IAB资源作为输入。输入内容需要符合[杜比IMF IAB指导约束](https://professionalsupport.dolby.com/s/article/Dolby-Atmos-IMF-IAB-interoperability-guidelines?language=en_US)。大多数杜比全景声®渲染器可以生成此类文件。
 
 **注意：请确保已经调整正确您的输入内容的响度等参数。[DCP-o-matic 2](https://dcpomatic.com/)等工具不能直接调整全景声资源的增益。**
 
@@ -52,7 +52,11 @@ CineIA_CLI是一个命令行工具。参数帮助如下（```cineia -h```）：
 cineia "IMF IAB文件名或文件路径.mxf" "DCP IAB文件名或文件路径.mxf"
 ```
 
+**注意：程序会覆盖输出文件。确保您使用了正确的文件名，避免不慎覆盖重要内容。**
+
 程序将自动校验、显示信息并完成转换。
+
+在封入DCP之前，请确保您已经使用[Dolby Atmos Renderer](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-renderer/)等杜比全景声®渲染器检查过输出文件。若您使用的渲染器不支持读写Cinema MXF，请先将输出的文件重新使用[Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/)转换回ADM BWF等常见格式再导入渲染器。务必进行完整播放并检查是否存在问题。
 
 输出的DCP IAB文件可以直接被大多数支持全景声®的DCP制作工具识别并正确封装。以[DCP-o-matic 2](https://dcpomatic.com/)为例：
 
@@ -90,7 +94,7 @@ IMF IAB，定义于[ST 2067-201](https://doi.org/10.5594/SMPTE.ST2067-201.2019)�
 此外，比特流需要一段名为“前序”（```Preamble```）（在早期25CSS讨论中也被称为```IABPCMSubFrame```）的部分。其包含一段一般为1603字节的数据用于在杜比全景声®比特流解码运行的过程中实时监视正确进行的渲染。这一部分的定义及规范尚未公开。故此，必须使用IMF IAB格式，以将编码IMF IAB时由编码器（如Dolby Atmos Storage System IDK）生成的该部分复制到生成的DCP IAB中。否则，生成的DCP IAB在播放时可能因为错误的监视导致故障（如声音对象错位等异常）。
 
 ## 开放源代码许可与致谢
-CineIA的诞生离不开[asdcplib](https://github.com/cinecert/asdcplib)库和[iab-renderer](https://github.com/DTSProAudio/iab-renderer)库。这些库在CineIA中完成了大部分的实现。请确保参阅这些库的开源协议。
+CineIA的诞生离不开[asdcplib](https://github.com/cinecert/asdcplib)库和[iab-renderer](https://github.com/DTSProAudio/iab-renderer)库。这些库在CineIA中完成了大部分的实现。请确保参阅这些库的开源协议。运行```cineia -l```获取更多信息。
 
 CineIA的开发与调试离不开[@筱理_Rize](https://space.bilibili.com/3848521/)和[@神奇的红毛丹](https://space.bilibili.com/364856318)的鼓励和支持，及[@冷小鸢aque](https://space.bilibili.com/27063907)不辞辛劳地联系协助进行实地测试。
 
