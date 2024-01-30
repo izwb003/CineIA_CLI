@@ -18,13 +18,13 @@ set(ASDCP_HEADER_PATH
 )
 
 # Build CineIA library
-add_library(CineIA cineia.h cineia.cpp)
-target_link_libraries(CineIA PUBLIC IABLib)
-target_include_directories(CineIA PUBLIC ${IABLib_HEADER_PATH})
+add_library(CineIALib cineia.h cineia.cpp)
+target_link_libraries(CineIALib PUBLIC IABLib)
+target_include_directories(CineIALib PUBLIC ${IABLib_HEADER_PATH})
 
 # Build executable
 add_executable(cineia main.cpp)
-target_link_libraries(cineia CineIA libkumu libasdcp libas02)
+target_link_libraries(cineia CineIALib libkumu libasdcp libas02)
 target_include_directories(cineia PRIVATE ${ASDCP_HEADER_PATH})
 
 # Pass version number
