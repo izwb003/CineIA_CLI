@@ -430,7 +430,7 @@ int main(int argc, const char* argv[]) {
     // Conversion
     for(uint32_t frameNum = 0; frameNum < frameCount; frameNum ++) {
         printf("\033[2K\r");
-        float percent = (float)frameNum / (float)frameCount;
+        float percent = (float) (frameNum + 1) / (float)frameCount;
         printf("Frame:%d/%d  Size:%dkB  Progress:%.1f%%...", frameNum + 1, frameCount, outputFileSize / 1000, percent * 100);
 
         AS_02::IAB::MXFReader::Frame iFrameWrite;
