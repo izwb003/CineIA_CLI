@@ -1,4 +1,4 @@
-/*
+﻿/*
  Copyright (c) 2024. Steven Song (izwb-003)
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,21 @@
 #include <AS_02_IAB.h>
 #include <AS_DCP.h>
 
+#include <indicators/block_progress_bar.hpp>
+#include <indicators/cursor_control.hpp>
+
 #include "cineia.h"
 
 // AS-DCP Program information
-static byte_t productUUID[ASDCP::UUIDlen] = {0x78, 0x0F, 0x58, 0xED, 0x3D, 0x9F, 0x3F, 0xB8, 0xDB, 0x81, 0xC0, 0xDF, 0x9E, 0x61, 0x8C, 0x3F};
-static std::string companyName = "CineIA " + std::to_string(PROJECT_VERSION_MAJOR) + "." + std::to_string(PROJECT_VERSION_MINOR) + "." + std::to_string(PROJECT_VERSION_PATCH);
+static byte_t productUUID[ASDCP::UUIDlen] =
+        {0x78, 0x0F, 0x58, 0xED,
+         0x3D, 0x9F, 0x3F, 0xB8,
+         0xDB, 0x81, 0xC0, 0xDF,
+         0x9E, 0x61, 0x8C, 0x3F};
+static std::string companyName = "CineIA "
+        + std::to_string(PROJECT_VERSION_MAJOR)
+        + "." + std::to_string(PROJECT_VERSION_MINOR)
+        + "." + std::to_string(PROJECT_VERSION_PATCH);
 static std::string productName = "asdcplib";
 static std::string productVersion = ASDCP::Version();
 
@@ -427,11 +437,28 @@ int main(int argc, const char* argv[]) {
         return -4;
     }
 
+    // Build a progress bar
+    indicators::show_console_cursor(false);
+    indicators::BlockProgressBar bar{
+        indicators::option::BarWidth{40},
+        indicators::option::ForegroundColor{indicators::Color::green},
+        indicators::option::ShowElapsedTime{true},
+        indicators::option::ShowRemainingTime{true},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
+        indicators::option::MaxProgress{frameCount}
+    };
+
     // Conversion
     for(uint32_t frameNum = 0; frameNum < frameCount; frameNum ++) {
-        printf("\033[2K\r");
-        float percent = (float) (frameNum + 1) / (float)frameCount;
-        printf("Frame:%d/%d  Size:%dkB  Progress:%.1f%%...", frameNum + 1, frameCount, outputFileSize / 1000, percent * 100);
+        bar.set_option(indicators::option::PostfixText{
+                "Frame: " + std::to_string(frameNum + 1) + "/" + std::to_string(frameCount)
+                + " Size: " + std::to_string(outputFileSize / 1000) + "KB"
+        });
+        if(frameNum + 1 == frameCount)
+            bar.set_option(indicators::option::PostfixText{
+                "Completed. Size: " + std::to_string(outputFileSize / 1000) + "KB"
+            });
+        bar.tick();
 
         AS_02::IAB::MXFReader::Frame iFrameWrite;
         std::stringstream iFrameStreamWrite;
@@ -456,6 +483,8 @@ int main(int argc, const char* argv[]) {
             error = CineIA::reassembleIABDolby(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
 
         if(error != kIABNoError) {
+            bar.set_option(indicators::option::ForegroundColor{indicators::Color::red});
+            bar.mark_as_completed();
             printf("\n");
             switch(error) {
                 case kValidateErrorAudioDataDLCDuplicateAudioDataID:
@@ -481,7 +510,7 @@ int main(int argc, const char* argv[]) {
                     return -15;
                 default:
                     fprintf(stderr, RED" Error:" NONE);
-                    fprintf(stderr, " Unknown error occured in frame %d. ErrorID: %d.\n", frameNum, error);
+                    fprintf(stderr, " Unknown error occurred in frame %d. ErrorID: %d.\n", frameNum, error);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
                     fprintf(stderr, " If the error still occurs, please share your file with the developer.");
@@ -500,7 +529,8 @@ int main(int argc, const char* argv[]) {
         writer.WriteFrame(oFrameBuffer);
     }
 
-    printf(GREEN"   Completed.\n" NONE);
+    bar.mark_as_completed();
+    indicators::show_console_cursor(true);
 
     printf("Closing files...");
 

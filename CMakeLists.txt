@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(CineIA_CLI VERSION 0.1.2)
+project(CineIA_CLI VERSION 0.2.0)
 
 # Init CMake
 cmake_policy(SET CMP0048 NEW)
@@ -23,13 +23,25 @@ set(ASDCP_HEADER_PATH
     external/asdcplib/src
 )
 
+# Include indicators library
+set(INDICATORS_HEADER_PATH
+    external/indicators/include
+)
+
 # Build executable
 add_executable(cineia
     main.cpp
     cineia.h cineia.cpp
 )
-target_link_libraries(cineia IABLib libkumu libasdcp libas02)
-target_include_directories(cineia PRIVATE ${ASDCP_HEADER_PATH} ${IABLib_HEADER_PATH})
+target_link_libraries(cineia
+    IABLib
+    libkumu libasdcp libas02
+)
+target_include_directories(cineia PRIVATE
+    ${ASDCP_HEADER_PATH}
+    ${IABLib_HEADER_PATH}
+    ${INDICATORS_HEADER_PATH}
+)
 
 # Pass version number
 target_compile_definitions(cineia PRIVATE
