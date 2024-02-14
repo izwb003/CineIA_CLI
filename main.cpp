@@ -191,6 +191,11 @@ void showLicense() {
            "OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n");
 }
 
+bool isFileExists(std::string& name) {
+    std::ifstream f(name.c_str());
+    return f.good();
+}
+
 struct cmdSettings {
     bool copyPreambleValue = true;
     bool forceDolbyConstraint = false;
@@ -268,6 +273,13 @@ bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings
                settings.outputFileName.compare(settings.outputFileName.length() - std::string(".mxf").length(),
                                                std::string(".mxf").length(), std::string(".mxf")) != 0)
                 settings.outputFileName.append(".mxf");
+
+            if(isFileExists(settings.outputFileName)) {
+                printf("Output file %s already exists. Overwrite? (Y/N):", settings.outputFileName.c_str());
+                char ans = std::cin.get();
+                if(ans != 'Y' && ans != 'y')
+                    exit(-100);
+            }
         }
         else {
             fprintf(stderr, RED" Error:" NONE);
