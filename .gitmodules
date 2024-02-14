@@ -4,3 +4,6 @@
 [submodule "external/asdcplib"]
 	path = external/asdcplib
 	url = https://github.com/cinecert/asdcplib.git
+[submodule "external/indicators"]
+	path = external/indicators
+	url = https://github.com/p-ranav/indicators.git
