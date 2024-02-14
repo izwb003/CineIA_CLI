@@ -31,17 +31,17 @@
 #include "cineia.h"
 
 // AS-DCP Program information
-static byte_t productUUID[ASDCP::UUIDlen] =
+static const byte_t productUUID[ASDCP::UUIDlen] =
         {0x78, 0x0F, 0x58, 0xED,
          0x3D, 0x9F, 0x3F, 0xB8,
          0xDB, 0x81, 0xC0, 0xDF,
          0x9E, 0x61, 0x8C, 0x3F};
-static std::string companyName = "CineIA "
+static const std::string companyName = "CineIA "
         + std::to_string(PROJECT_VERSION_MAJOR)
         + "." + std::to_string(PROJECT_VERSION_MINOR)
         + "." + std::to_string(PROJECT_VERSION_PATCH);
-static std::string productName = "asdcplib";
-static std::string productVersion = ASDCP::Version();
+static const std::string productName = "asdcplib";
+static const std::string productVersion = ASDCP::Version();
 
 // Console color definition
 #define NONE         "\033[m"
@@ -191,6 +191,11 @@ void showLicense() {
            "OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n");
 }
 
+bool isFileExists(std::string& name) {
+    std::ifstream f(name.c_str());
+    return f.good();
+}
+
 struct cmdSettings {
     bool copyPreambleValue = true;
     bool forceDolbyConstraint = false;
@@ -268,6 +273,13 @@ bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings
                settings.outputFileName.compare(settings.outputFileName.length() - std::string(".mxf").length(),
                                                std::string(".mxf").length(), std::string(".mxf")) != 0)
                 settings.outputFileName.append(".mxf");
+
+            if(isFileExists(settings.outputFileName)) {
+                printf("Output file %s already exists. Overwrite? (Y/N):", settings.outputFileName.c_str());
+                char ans = std::cin.get();
+                if(ans != 'Y' && ans != 'y')
+                    exit(-100);
+            }
         }
         else {
             fprintf(stderr, RED" Error:" NONE);
@@ -346,7 +358,7 @@ int main(int argc, const char* argv[]) {
     }
     iFrameStream.write((const char*)iFrame.second, iFrame.first);
 
-    if(CineIA::getIABFrameInfo(&iFrameStream, iFrameInfo) != kIABNoError) {
+    if(CineIA::getIABFrameInfo(&iFrameStream, iFrameInfo) != CineIA::kIABNoError) {
         fprintf(stderr, RED" Error:" NONE);
         fprintf(stderr, " Failed to get IAB frames' info. The IABFrame may has error.");
         return -4;
@@ -403,6 +415,13 @@ int main(int argc, const char* argv[]) {
         fprintf(stderr, RED" Error:" NONE);
         fprintf(stderr, " Cinema Atmos does not support 23.976fps frame rate.");
         return -15;
+    }
+
+    if(!iFrameInfo.isValidBedConfiguration) {
+        fprintf(stderr, RED" Error:" NONE);
+        fprintf(stderr, " The bed configuration is invalid. It might be a 5.1.4 bed.\n");
+        fprintf(stderr, " Atmos requires only one 9.1(7.1.2) bed.");
+        return -16;
     }
 
     // Begin conversion
@@ -476,32 +495,32 @@ int main(int argc, const char* argv[]) {
 
         iFrameStreamWrite.write((const char*)iFrameWrite.second, iFrameWrite.first);
 
-        iabError error = kIABNoError;
+        CineIA::iabError error = CineIA::kIABNoError;
         if(!settings.forceDolbyConstraint)
             error = CineIA::reassembleIAB(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
         else
             error = CineIA::reassembleIABDolby(&iFrameStreamWrite, oFrameWrite, oFrameWriteLength);
 
-        if(error != kIABNoError) {
+        if(error != CineIA::kIABNoError) {
             bar.set_option(indicators::option::ForegroundColor{indicators::Color::red});
             bar.mark_as_completed();
             printf("\n");
             switch(error) {
-                case kValidateErrorAudioDataDLCDuplicateAudioDataID:
+                case CineIA::kValidateErrorAudioDataDLCDuplicateAudioDataID:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unknown AudioDataID in frame %d.\n", frameNum);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
                     fprintf(stderr, " If the error still occurs, please share your file with the developer.");
                     return -6;
-                case kValidateErrorIAFrameUndefinedElementType:
+                case CineIA::kValidateErrorIAFrameUndefinedElementType:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unknown IABFrame SubElement type found in frame %d.\n", frameNum);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
                     fprintf(stderr, " If the error still occurs, please share your file with the developer.");
                     return -7;
-                case kIABPackerObjectSpreadModeError:
+                case CineIA::kIABPackerObjectSpreadModeError:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unsupported ObjectSpreadMode found in frame %d.\n", frameNum);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");

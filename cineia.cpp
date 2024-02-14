@@ -27,18 +27,20 @@
 #include <common/IABElements.h>
 
 // ST 2098-2:2019 Table 18 AudioDataDLC Sample Count versus Frame Rate Code and Sample Rate
-int dlcSampleCountList[10][2] = {{2000, 4000},
-                                 {1920, 3840},
-                                 {1600, 3200},
-                                 {1000, 2000},
-                                 {960, 1920},
-                                 {800, 1600},
-                                 {500, 1000},
-                                 {480, 960},
-                                 {400, 800},
-                                 {2002, 4004}};
+static const int dlcSampleCountList[10][2] = {
+    {2000, 4000},
+    {1920, 3840},
+    {1600, 3200},
+    {1000, 2000},
+    {960, 1920},
+    {800, 1600},
+    {500, 1000},
+    {480, 960},
+    {400, 800},
+    {2002, 4004}
+};
 
-iabError CineIA::getIABFrameInfo(std::istream *iInputStream, iabFrameInfo &oIABFrameInfo) {
+CineIA::iabError CineIA::getIABFrameInfo(std::istream *iInputStream, iabFrameInfo &oIABFrameInfo) {
     iabError error = kIABNoError;
     IABParser parser(iInputStream);
 
@@ -57,10 +59,23 @@ iabError CineIA::getIABFrameInfo(std::istream *iInputStream, iabFrameInfo &oIABF
 
     for(IABElement* subElement : subElements) {
         if(IABBedDefinition* bedDefinition = dynamic_cast<IABBedDefinition*>(subElement)) {
+            // Check BedDefinition count and channel count
             oIABFrameInfo.bedDefinitionCount ++;
             IABChannelCountType bedDefinitionChannelCount;
             bedDefinition->GetChannelCount(bedDefinitionChannelCount);
             oIABFrameInfo.bedDefinitionChannelCount = (uint32_t)bedDefinitionChannelCount;
+
+            // Check bed configuration
+            std::vector<IABChannel*> bedChannels;
+            bedDefinition->GetBedChannels(bedChannels);
+            for(IABChannel* bedChannel : bedChannels) {
+                IABChannelIDType channelID;
+                bedChannel->GetChannelID(channelID);
+                if(channelID > 0xD) {
+                    oIABFrameInfo.isValidBedConfiguration = false;
+                    break;
+                }
+            }
         }
         else if(IABObjectDefinition* objectDefinition = dynamic_cast<IABObjectDefinition*>(subElement))
             oIABFrameInfo.objectDefinitionCount ++;
@@ -76,7 +91,7 @@ void CineIA::showError(iabError error) {
     }
 }
 
-iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength) {
+CineIA::iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength) {
     // Error variable
     iabError error = kIABNoError;
 
@@ -355,7 +370,7 @@ iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<char> &oO
     return kIABNoError;
 }
 
-iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength) {
+CineIA::iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vector<char> &oOutputBuffer, uint32_t &oOutputLength) {
     // Error variable
     iabError error = kIABNoError;
 
@@ -671,7 +686,7 @@ void CineIA::copyPreambleValue(std::istream *iIMFBuffer, std::vector<char> &ioOu
 
 int CineIA::convertFrameRate(IABFrameRateType iFrameRate) {
     switch(iFrameRate) {
-        case SMPTE::ImmersiveAudioBitstream::kIABFrameRate_23_976FPS:
+        case kIABFrameRate_23_976FPS:
             return 23;
         case kIABFrameRate_24FPS:
             return 24;

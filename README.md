@@ -1,6 +1,11 @@
 # CineIA_CLI
 Command line tool for encoding IMF IAB into Atmos compatible DCP IAB.
 
+![GitHub Release](https://img.shields.io/github/v/release/izwb003/CineIA_CLI)
+![GitHub last commit](https://img.shields.io/github/last-commit/izwb003/CineIA_CLI)
+![GitHub License](https://img.shields.io/github/license/izwb003/CineIA_CLI)
+
+
 [简体中文](/README.CN.md)
 
 ## Introduction
@@ -54,8 +59,6 @@ After obtaining the IMF IAB ```.mxf``` file, use CineIA_CLI to convert it to DCP
 cineia "IMF IAB file name or path.mxf" "DCP IAB file name or path.mxf"
 ```
 
-**Notice: The program will overwrite the output file. Make sure you use the correct file name to avoid accidentally overwriting important content.**
-
 The program will automatically verify, display information, and complete the conversion.
 
 Before merging into DCP, please ensure that you have used a Dolby Atmos® renderer such as [Dolby Atmos Renderer](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-renderer/) to check the output file. If the renderer you are using does not support reading and writing Cinema MXF, please reuse [Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/) to convert it back to common formats such as ADM BWF before importing into the renderer. Be sure to perform a complete playback and check for any issues.
@@ -94,6 +97,8 @@ In addition, the bitstream requires a section called "Preamble" (also known as "
 
 ## Open Source Licenses and Acknowledgements
 The birth of CineIA cannot be separated from [asdcplib](https://github.com/cinecert/asdcplib) library and [iab-renderer](https://github.com/DTSProAudio/iab-renderer) library. Most of the implemention in CineIA was made by these libraries. Please ensure to refer to the open source licenses for these libraries. Run ```cineia -l``` for more information.
+
+The progress bar, full of artistic sense, was made by MIT-licensed library [indicators](https://github.com/p-ranav/indicators).
 
 The development and debugging of CineIA cannot be separated from [@筱理-Rize](https://space.bilibili.com/3848521/) and [@神奇的红毛丹](https://space.bilibili.com/364856318)'s encouragement and support. Also appreciate [@冷小鸢aque](https://space.bilibili.com/27063907) tirelessly contacting and assisting with in-cinema testing.
 

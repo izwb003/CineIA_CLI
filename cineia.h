@@ -25,9 +25,9 @@
 #include <IABErrors.h>
 #include <common/IABElements.h>
 
-using namespace SMPTE::ImmersiveAudioBitstream;
-
 namespace CineIA {
+    using namespace SMPTE::ImmersiveAudioBitstream;
+
     struct iabFrameInfo {
         IABFrameRateType frameRate;
         IABSampleRateType sampleRate;
@@ -36,6 +36,7 @@ namespace CineIA {
         uint32_t objectDefinitionCount = 0;
         uint32_t bedDefinitionCount = 0;
         uint32_t bedDefinitionChannelCount;
+        bool isValidBedConfiguration = true;
     };
 
     iabError getIABFrameInfo(std::istream *iInputStream, iabFrameInfo &oIABFrameInfo);

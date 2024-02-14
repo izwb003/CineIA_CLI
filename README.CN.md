@@ -52,8 +52,6 @@ CineIA_CLI是一个命令行工具。参数帮助如下（```cineia -h```）：
 cineia "IMF IAB文件名或文件路径.mxf" "DCP IAB文件名或文件路径.mxf"
 ```
 
-**注意：程序会覆盖输出文件。确保您使用了正确的文件名，避免不慎覆盖重要内容。**
-
 程序将自动校验、显示信息并完成转换。
 
 在封入DCP之前，请确保您已经使用[Dolby Atmos Renderer](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-renderer/)等杜比全景声®渲染器检查过输出文件。若您使用的渲染器不支持读写Cinema MXF，请先将输出的文件重新使用[Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/)转换回ADM BWF等常见格式再导入渲染器。务必进行完整播放并检查是否存在问题。
@@ -92,6 +90,8 @@ IMF IAB，定义于[ST 2067-201](https://doi.org/10.5594/SMPTE.ST2067-201.2019)�
 
 ## 开放源代码许可与致谢
 CineIA的诞生离不开[asdcplib](https://github.com/cinecert/asdcplib)库和[iab-renderer](https://github.com/DTSProAudio/iab-renderer)库。这些库在CineIA中完成了大部分的实现。请确保参阅这些库的开源协议。运行```cineia -l```获取更多信息。
+
+那个充满艺术感的进度条是通过MIT许可证开源的库[indicators](https://github.com/p-ranav/indicators)实现的。
 
 CineIA的开发与调试离不开[@筱理_Rize](https://space.bilibili.com/3848521/)和[@神奇的红毛丹](https://space.bilibili.com/364856318)的鼓励和支持，及[@冷小鸢aque](https://space.bilibili.com/27063907)不辞辛劳地联系协助进行实地测试。
 
