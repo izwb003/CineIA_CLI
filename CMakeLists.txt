@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(CineIA_CLI VERSION 0.2.0)
+project(CineIA_CLI VERSION 0.2.1)
 
 # Init CMake
 cmake_policy(SET CMP0048 NEW)
