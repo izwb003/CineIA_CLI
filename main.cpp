@@ -1,4 +1,4 @@
-﻿/*
+/*
  Copyright (c) 2024. Steven Song (izwb-003)
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 #include <AS_02_IAB.h>
 #include <AS_DCP.h>
 
-#include <indicators/block_progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 #include <indicators/cursor_control.hpp>
 
 #include "cineia.h"
@@ -458,8 +458,13 @@ int main(int argc, const char* argv[]) {
 
     // Build a progress bar
     indicators::show_console_cursor(false);
-    indicators::BlockProgressBar bar{
+    indicators::ProgressBar bar{
         indicators::option::BarWidth{40},
+        indicators::option::Start{"["},
+        indicators::option::Fill{"="},
+        indicators::option::Lead{"="},
+        indicators::option::Remainder{" "},
+        indicators::option::End{"]"},
         indicators::option::ForegroundColor{indicators::Color::green},
         indicators::option::ShowElapsedTime{true},
         indicators::option::ShowRemainingTime{true},
@@ -548,7 +553,6 @@ int main(int argc, const char* argv[]) {
         writer.WriteFrame(oFrameBuffer);
     }
 
-    bar.mark_as_completed();
     indicators::show_console_cursor(true);
 
     printf("Closing files...");
