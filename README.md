@@ -1,5 +1,6 @@
 # CineIA_CLI
-Command line tool for encoding IMF IAB into Atmos compatible DCP IAB.
+
+Command line tool for encoding IMF IAB into (Atmos compatible) DCP IAB.
 
 ![GitHub Release](https://img.shields.io/github/v/release/izwb003/CineIA_CLI)
 ![GitHub last commit](https://img.shields.io/github/last-commit/izwb003/CineIA_CLI)
@@ -10,12 +11,7 @@ Command line tool for encoding IMF IAB into Atmos compatible DCP IAB.
 
 ## Introduction
 
-### Background
-Dolby Atmos® greatly enhanced the immersive experience in cinemas. However, The production of Atmos assets in cinema DCP (Atmos copy) requires the use of Dolby specific tools or RMU. That is to say, there are currently no publicly accessible tools available for making Atmos copies. This poses an obstacle to fully utilizing the capabilities of a Atmos theater in situations where it is necessary to play self-made cinema content, such as movie viewing events.
-
-However, SMPTE®'s new standard for the release of immersive audio content in next-generation cinemas - Immersive Audio Bitstream (IAB), also known as [ST 2098](https://doi.org/10.5594/SMPTE.ST2098-2.2019) series standards fully disclose Dolby Atmos®' technical details from a lateral perspective. Some registration disclosure documents, such as [RDD 29](https://doi.org/10.5594/SMPTE.RDD29.2019), [RDD 57](https://doi.org/10.5594/SMPTE.RDD57.2021) also disclosed the constraints of Dolby Atmos® bitstream.
-
-CineIA is a re-encoding tool aimed at creating Immersive Audio Bitstreams that meet these constraints, indirectly available Dolby Atmos® Cinemas to play audio content with a complete immersive experience, unleashing Dolby Atmos® Cinemas' maximum capacity.
+CineIA is a re-encoding tool aims at creating DCP assets containing Immersive Audio Bitstreams that meet [IAB Application Profile 1 (SMPTE RDD57:2021)](https://doi.org/10.5594/SMPTE.RDD57.2021), to available immersive audio cinemas that support (or compatible with) this constraint (e.g. Dolby Atmos® cinemas) to play audio content with a complete immersive experience.
 
 ## Using Guide
 
@@ -47,11 +43,11 @@ Option Summary:
 ### Usage
 This tool accepts IAB resources from Interoperable Master Format (IMF) packages as input. The input content needs to comply with [Dolby Atmos® IMF IAB Interoperability Guidelines](https://professionalsupport.dolby.com/s/article/Dolby-Atmos-IMF-IAB-interoperability-guidelines?language=en_US). Most Dolby Atmos® renderer can generate such files.
 
-**Notice: Please ensure that the parameters such as loudness of your input content have been adjusted correctly. Tools like [DCP-o-matic 2](https://dcpomatic.com/) cannot directly adjust the gain of Atmos assets.**
+*Notice: Please ensure that the parameters such as loudness of your input content have been adjusted correctly. Tools like [DCP-o-matic 2](https://dcpomatic.com/) cannot directly adjust the gain of Atmos assets.*
 
-If you have other formats of Dolby Atmos® Master files (such as .atmos, ADM BWF, etc.), please use the free tool [Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/) to convert it to IMF IAB format.
+*Tip: If you have other formats of Dolby Atmos® Master files (such as .atmos, ADM BWF, etc.), please use the free tool [Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/) to convert it to IMF IAB format.*
 
-***Tip: If the IMF IAB files you hold can cause problems, please prioritize using the [Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/) to convert the file back to IMF IAB. The IMF IAB files created by this tool are more in line with the Dolby specification.***
+*Tip: If the IMF IAB files you hold can cause problems, please try to add option ```-f```, or prioritize using the [Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/) to convert the file back to IMF IAB. The IMF IAB files created by this tool are more in line with the specification.*
 
 After obtaining the IMF IAB ```.mxf``` file, use CineIA_CLI to convert it to DCP IAB. Run:
 
@@ -61,16 +57,14 @@ cineia "IMF IAB file name or path.mxf" "DCP IAB file name or path.mxf"
 
 The program will automatically verify, display information, and complete the conversion.
 
-Before merging into DCP, please ensure that you have used a Dolby Atmos® renderer such as [Dolby Atmos Renderer](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-renderer/) to check the output file. If the renderer you are using does not support reading and writing Cinema MXF, please reuse [Dolby Atmos Conversion Tool](https://professional.dolby.com/product/dolby-atmos-content-creation/dolby-atmos-conversion-tool/) to convert it back to common formats such as ADM BWF before importing into the renderer. Be sure to perform a complete playback and check for any issues.
-
-The output DCP IAB file can be directly used by most DCP creators that support Atmos assets. Using [DCP-o-matic 2](https://dcpomatic.com/) as an example:
+The output DCP IAB file can be directly used by most DCP creators that support IAB/Atmos assets. Using [DCP-o-matic 2](https://dcpomatic.com/) as an example:
 
 - Under the "Content" tab, click "Add File..." and select the DCP IAB ```.mxf``` file that you have successfully converted.
 - Set "Channel" to 14 in the "Audio" tab under the "DCP" tab.
-- In addition, you can also add regular stereo/5.1/7.1 audio files and set them according to normal operation. When Dolby Atmos® is not supported in the cinema, the sound will be played in the added stereo/5.1/7.1 format. In Dolby Atmos® Cinema, the sound will be played in the immersive audio effect. If you have not added regular stereo/5.1/7.1 audio in a cinema that does not support Dolby Atmos®, the sound will not be able to play.
+- In addition, you can also add regular stereo/5.1/7.1 audio files and set them according to normal operation. They will be played when the decoder is unable to play DCP IAB, such as when it is not supported or there are errors.
 - Add your other contents to build a complete DCP and render it for export.
 
-Next, in the Dolby Atmos® cinema where you need to play the content, simply load DCP and play it according to the way you copy Atmos copies.
+Next, in the cinema where you need to play the content, simply load DCP and play it according to the way you copy IAB/Atmos copies.
 
 ## Technical Information
 
@@ -80,7 +74,7 @@ CineIA_CLI is a CMake project. Just follow the CMake usage method.
 
 Project dependency [asdcplib](https://github.com/cinecert/asdcplib) needs [Xerces-C++](https://xerces.apache.org/xerces-c/) and [OpenSSL](https://www.openssl.org/) as dependencies. Please configure these dependencies correctly before starting build.
 
-**Hint: If you encounter difficulties in handling dependencies under Windows, you can directly specify the following CMake macro as the corresponding librarys' ```.lib``` file location.**
+*Hint: If you encounter difficulties in handling dependencies under Windows, you can directly specify the following CMake macros as the corresponding librarys' ```.lib``` file location.*
 
 ```sh
 -Wno-dev
@@ -91,9 +85,11 @@ Project dependency [asdcplib](https://github.com/cinecert/asdcplib) needs [Xerce
 ```
 
 ### Why IMF IAB?
-IMF IAB, defined in [ST 2067-201](https://doi.org/10.5594/SMPTE.ST2067-201.2019), is a [ST 2098-2](https://doi.org/10.5594/SMPTE.ST2098-2.2019) Expansion. Except for some constraints, it is the same as DCP IAB (or Dolby Atmos® Cinema Bitstream). The specifications of Bitstream are consistent. By directly adjusting its constraints, it can be quickly changed to DCP IAB.
+IMF IAB, defined in [ST 2067-201](https://doi.org/10.5594/SMPTE.ST2067-201.2019), is a [ST 2098-2](https://doi.org/10.5594/SMPTE.ST2098-2.2019) Expansion. Except for some constraints, it is the same as DCP IAB (or Dolby Atmos® cinema bitstream). The specifications of the bitstream are consistent. By directly adjusting its constraints, it can be quickly changed into DCP IAB.
 
-In addition, the bitstream requires a section called "Preamble" (also known as "IABPCMSubFrame" in early 25CSS discussions). It contains a segment of data typically 1603 bytes for use in real time monitoring of correct rendering during Dolby Atmos® bitstream decoding operation. The definition and specifications of this section have not yet been made public. Therefore, it is necessary to use the IMF IAB format to copy the Preamble generated by the encoder (such as Dolby Atmos Storage System IDK) when encoding the IMF IAB into the generated DCP IAB. Otherwise, the generated DCP IAB may malfunction during playback due to incorrect monitoring, such as misalignment of sound objects.
+In addition, the bitstream requires a section called "Preamble" (a.k.a. "IABPCMSubFrame" in early 25CSS discussions). It contains a segment of data typically 1603 bytes (varies by frame rate) for use in bitstream decoding operation. The definition and specifications of this section have not yet been made public. Therefore, it is necessary to use the IMF IAB format to copy the Preamble generated by the IMF IAB encoder when encoding the generated DCP IAB. Otherwise, the generated DCP IAB may malfunction during playback.
+
+*Tip: You may override this operation by using option ```-n```, but it is strongly not recommended to do so.*
 
 ## Open Source Licenses and Acknowledgements
 The birth of CineIA cannot be separated from [asdcplib](https://github.com/cinecert/asdcplib) library and [iab-renderer](https://github.com/DTSProAudio/iab-renderer) library. Most of the implemention in CineIA was made by these libraries. Please ensure to refer to the open source licenses for these libraries. Run ```cineia -l``` for more information.
@@ -106,7 +102,7 @@ CineIA_CLI was open-sourced under [MIT License](https://opensource.org/license/m
 
 ## Announcement
 
-**CineIA is not related to Dolby Laboratories. The output of this program cannot represent the product quality of Dolby Laboratories. This program can only be used for UGC content production and cannot be used for professional content production work. For professional content distribution needs, please contact Dolby Laboratories.**
+**CineIA is an [IAB Application Profile 1](https://doi.org/10.5594/SMPTE.RDD57.2021) DCP IAB generator. It CANNOT replace a Dolby Atmos® Cinema MXF generator's work, although they are compatible. Therefore, the output of this program cannot represent the product quality of Dolby Laboratories (and/or other entities). This program can ONLY be used for UGC content production and CANNOT be used for professional/commercial content production work. For professional/commercial content distribution needs, please contact professional content distributers.**
 
 **THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
