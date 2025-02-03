@@ -63,8 +63,8 @@ static const std::string productVersion = ASDCP::Version();
 
 void showProgramInfo() {
     printf("\n\tCineIA_CLI Version %d.%d.%d, %s: ", PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH, __DATE__);
-    printf("IMF IAB to Atmos Compatible Cinema IAB converter.\n");
-    printf("\t\t\tCopyright (c) 2024 @izwb003, @Shino_Rize, @Connor\n");
+    printf("IMF IAB to IAB Application Profile 1 DCP IAB converter.\n");
+    printf("\t\t\tCopyright (c) 2025 @izwb003, @Shino_Rize, @Connor\n");
     printf("\t\tPowered by IABLib and AS-DCP. Run \"cineia -l\" for more information.\n\n");
     printf(RED" Warning:" NONE);
     printf(" THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n"
@@ -75,10 +75,13 @@ void showProgramInfo() {
            " OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
            " SOFTWARE.\n");
     printf(YELLOW" Note:" NONE);
-    printf(" The output of this program cannot represent the product quality of\n"
-           " Dolby Laboratories. This program can only be used for UGC content production\n"
-           " and cannot be used for professional content production work. For professional\n"
-           " content distribution needs, please contact Dolby Laboratories.\n\n");
+    printf(" CineIA is an IAB Application Profile 1 DCP IAB generator. It CANNOT replace\n"
+           " a Dolby Atmos® Cinema MXF generator's work, although they are compatible. \n"
+           " Therefore, the output of this program cannot represent the product quality of\n"
+           " Dolby Laboratories (and/or other entities). This program can ONLY be used for\n"
+           " UGC content production and CANNOT be used for professional/commercial content\n"
+           " production work. For professional/commercial content distribution needs, please\n"
+           " contact professional content distributers.\n\n");
 }
 
 void showHelp() {
@@ -88,14 +91,14 @@ void showHelp() {
 
            "Option Summary:\n\n"
            "-n,\t--no-copy-preamble\t\tDo not copy the \"PreambleValue\" part from IMF IAB bitstream.\n"
-           "\t\t\t\t\tTry using this argument if the output bitstream does not work fine.\n"
-           "-f,\t--force-dolby-constraint\tModify the bitstream to ensure that every detail conforms to the Dolby constraint.\n"
+           "\t\t\t\t\tThis option is for debug purpose only.\n"
+           "-f,\t--force-dolby-constraint\tModify the bitstream to ensure that every detail conforms to the Dolby Atmos®️ constraint.\n"
            "\t\t\t\t\tTry using this argument if the output bitstream causes error,\n"
            "\t\t\t\t\tbut it may cause the bitstream to not work as expected.\n"
            "-c,\t--set-channels <number>\t\tSet the bed channel number in MXF AtmosDescriptor.\n"
-           "\t\t\t\t\tDo not set unless you meet some problem.\n"
+           "\t\t\t\t\tDefault: 10. Do not set unless really necessary.\n"
            "-o,\t--set-objects <number>\t\tSet the object number in MXF AtmosDescriptor.\n"
-           "\t\t\t\t\tDo not set unless you meet some problem.\n"
+           "\t\t\t\t\tDefault: 118. Do not set unless really necessary.\n"
            "-l,\t--show-licenses\t\t\tShow open-source licenses and quit.\n"
            "-h,\t--help\t\t\t\tPrint this help message and quit.\n"
     );
@@ -380,47 +383,47 @@ int main(int argc, const char* argv[]) {
     printf("\tObject count\t\t\t%d\n", iFrameInfo.objectDefinitionCount);
     printf("======================================================================\n\n");
 
-    // Check Dolby constraint
+    // Check IAB constraint
     if(iFrameInfo.maxRendered > 128) {
         fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " More than 128 audios were found. Atmos does not support so many.");
+        fprintf(stderr, " More than 128 audios were found. IAB Application Profile 1 does not support so many.");
         return -10;
     }
 
     if(iFrameInfo.bedDefinitionCount != 1) {
         fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " No or too many beds were found. Atmos requires only one 9.1(7.1.2) bed.");
+        fprintf(stderr, " No or too many beds were found. IAB Application Profile 1 requires only one 9.1(7.1.2) bed.");
         return -11;
     }
 
     if(iFrameInfo.bedDefinitionChannelCount != 10) {
         fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " The bed contains %d channels. Atmos requires only one 9.1(7.1.2) bed.", iFrameInfo.bedDefinitionChannelCount);
+        fprintf(stderr, " The bed contains %d channels. IAB Application Profile 1 requires only one 9.1(7.1.2) bed.", iFrameInfo.bedDefinitionChannelCount);
         return -12;
     }
 
     if(iFrameInfo.objectDefinitionCount > 118) {
         fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " More than 118 objects were found. Atmos requires less than 118 audio objects.");
+        fprintf(stderr, " More than 118 objects were found. IAB Application Profile 1 requires less than 118 audio objects.");
         return -13;
     }
 
     if(CineIA::convertBitDepth(iFrameInfo.bitDepth) != 24) {
         fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " Cinema Atmos requires 24bits audio bit depth.");
+        fprintf(stderr, " IAB Application Profile 1 requires 24bits audio bit depth.");
         return -14;
     }
 
     if(CineIA::convertFrameRate(iFrameInfo.frameRate) == 23) {
         fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " Cinema Atmos does not support 23.976fps frame rate.");
+        fprintf(stderr, " IAB Application Profile 1 does not support 23.976fps frame rate.");
         return -15;
     }
 
     if(!iFrameInfo.isValidBedConfiguration) {
         fprintf(stderr, RED" Error:" NONE);
         fprintf(stderr, " The bed configuration is invalid. It might be a 5.1.4 bed.\n");
-        fprintf(stderr, " Atmos requires only one 9.1(7.1.2) bed.");
+        fprintf(stderr, " IAB Application Profile 1 requires only one 9.1(7.1.2) bed.");
         return -16;
     }
 
@@ -516,28 +519,28 @@ int main(int argc, const char* argv[]) {
                     fprintf(stderr, " Unknown AudioDataID in frame %d.\n", frameNum);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
-                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.\n");
                     return -6;
                 case CineIA::kValidateErrorIAFrameUndefinedElementType:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unknown IABFrame SubElement type found in frame %d.\n", frameNum);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
-                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.\n");
                     return -7;
                 case CineIA::kIABPackerObjectSpreadModeError:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unsupported ObjectSpreadMode found in frame %d.\n", frameNum);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
-                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.\n");
                     return -15;
                 default:
                     fprintf(stderr, RED" Error:" NONE);
                     fprintf(stderr, " Unknown error occurred in frame %d. ErrorID: %d.\n", frameNum, error);
                     fprintf(stderr, " Please try to use Dolby tools, like Dolby Atmos Conversion Tool,\n");
                     fprintf(stderr, " To generate the IMF IAB file and try again.\n");
-                    fprintf(stderr, " If the error still occurs, please share your file with the developer.");
+                    fprintf(stderr, " If the error still occurs, please share your file with the developer.\n");
                     return -8;
             }
         }

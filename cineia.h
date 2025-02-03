@@ -35,7 +35,7 @@ namespace CineIA {
         IABMaxRenderedRangeType maxRendered;
         uint32_t objectDefinitionCount = 0;
         uint32_t bedDefinitionCount = 0;
-        uint32_t bedDefinitionChannelCount;
+        uint32_t bedDefinitionChannelCount = 0;
         bool isValidBedConfiguration = true;
     };
 

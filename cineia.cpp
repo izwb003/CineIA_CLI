@@ -95,11 +95,11 @@ CineIA::iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<c
     // Error variable
     iabError error = kIABNoError;
 
-    // Build IMF parser and Atmos packer
+    // Build IMF parser and DCP packer
     IABParser* parser = new IABParser(iInputStream);
     IABPacker* packer = new IABPacker();
 
-    // Build IMF IABFrame and Atmos IABFrame pointer
+    // Build IMF IABFrame and DCP IABFrame pointer
     IABFrameInterface* iIABFrame;
     IABFrameInterface* oIABFrame;
 
@@ -107,7 +107,7 @@ CineIA::iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<c
     parser->ParseIABFrame();
     parser->GetIABFrameReleased(iIABFrame);
 
-    // Get Atmos IABFrame
+    // Get DCP IABFrame
     packer->GetIABFrame(oIABFrame);
 
     // Copy necessary IABFrame settings
@@ -140,13 +140,13 @@ CineIA::iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<c
     iIABFrame->GetSubElements(iSubElements);
 
     /*
-     * Dolby Atmos' constraint requires ObjectDefinition's MetaID to begin from 1.
+     * IAB Application Profile 1's constraint requires ObjectDefinition's MetaID to begin from 1.
      * So we have to keep a counter to edit ObjectDefinition's MetaID in an order.
      */
     IABMetadataIDType objectDefinitionMetaIDCounter = 1;
 
     /*
-     * In a real Dolby Atmos bitstream, there will not appear AudioDataID = 0.
+     * In a real IAB Application Profile 1 (or DCP Dolby Atmos) bitstream, there will not appear AudioDataID = 0.
      * So we have to fill those elements which uses AudioDataID = 0 with Audio data that has no sound.
      * The following two variables are used to store a counter to mark which AudioDataID the current element should use.
      */
@@ -190,7 +190,7 @@ CineIA::iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<c
             IABBedDefinition* oBedDefinition = new IABBedDefinition(frameFrameRate);
 
             // Copy necessary BedDefinition settings
-            IABMetadataIDType bedDefinitionMetaID = 0;  // * Dolby Atmos' constraint limits BedDefinition's MetaID to 0.
+            IABMetadataIDType bedDefinitionMetaID = 0;  // * IAB Application Profile 1 or Dolby Atmos' constraint limits BedDefinition's MetaID to 0.
             uint1_t bedDefinitionIsConditionalBed;
             IABUseCaseType bedDefinitionBedUseCase;
 
@@ -352,10 +352,10 @@ CineIA::iabError CineIA::reassembleIAB(std::istream *iInputStream, std::vector<c
     oSubElements.insert(oSubElements.end(), std::make_move_iterator(oBedDefinitions.begin()), std::make_move_iterator(oBedDefinitions.end()));
     oSubElements.insert(oSubElements.end(), std::make_move_iterator(oObjectDefinitions.begin()), std::make_move_iterator(oObjectDefinitions.end()));
 
-    // Write subelements to Atmos IABFrame
+    // Write subelements to DCP IABFrame
     oIABFrame->SetSubElements(oSubElements);
 
-    // Pack Atmos IABFrame and output
+    // Pack DCP IABFrame and output
     packer->PackIABFrame();
     packer->GetPackedBuffer(oOutputBuffer, oOutputLength);
 
@@ -374,11 +374,11 @@ CineIA::iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vec
     // Error variable
     iabError error = kIABNoError;
 
-    // Build IMF parser and Atmos packer
+    // Build IMF parser and DCP packer
     IABParser* parser = new IABParser(iInputStream);
     IABPacker* packer = new IABPacker();
 
-    // Build IMF IABFrame and Atmos IABFrame pointer
+    // Build IMF IABFrame and DCP IABFrame pointer
     IABFrameInterface* iIABFrame;
     IABFrameInterface* oIABFrame;
 
@@ -386,7 +386,7 @@ CineIA::iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vec
     parser->ParseIABFrame();
     parser->GetIABFrameReleased(iIABFrame);
 
-    // Get Atmos IABFrame
+    // Get DCP IABFrame
     packer->GetIABFrame(oIABFrame);
 
     // Copy necessary IABFrame settings
@@ -419,13 +419,13 @@ CineIA::iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vec
     iIABFrame->GetSubElements(iSubElements);
 
     /*
-     * Dolby Atmos' constraint requires ObjectDefinition's MetaID to begin from 1.
+     * IAB Application Profile 1's constraint requires ObjectDefinition's MetaID to begin from 1.
      * So we have to keep a counter to edit ObjectDefinition's MetaID in an order.
      */
     IABMetadataIDType objectDefinitionMetaIDCounter = 1;
 
     /*
-     * In a real Dolby Atmos bitstream, there will not appear AudioDataID = 0.
+     * In a real IAB Application Profile 1 (or DCP Dolby Atmos) bitstream, there will not appear AudioDataID = 0.
      * So we have to fill those elements which uses AudioDataID = 0 with Audio data that has no sound.
      * The following two variables are used to store a counter to mark which AudioDataID the current element should use.
      */
@@ -469,7 +469,7 @@ CineIA::iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vec
             IABBedDefinition* oBedDefinition = new IABBedDefinition(frameFrameRate);
 
             // Copy necessary BedDefinition settings
-            IABMetadataIDType bedDefinitionMetaID = 0;  // * Dolby Atmos' constraint limits BedDefinition's MetaID to 0.
+            IABMetadataIDType bedDefinitionMetaID = 0;  // * IAB Application Profile 1 or Dolby Atmos' constraint limits BedDefinition's MetaID to 0.
             uint1_t bedDefinitionIsConditionalBed;
             IABUseCaseType bedDefinitionBedUseCase;
 
@@ -641,10 +641,10 @@ CineIA::iabError CineIA::reassembleIABDolby(std::istream *iInputStream, std::vec
     oSubElements.insert(oSubElements.end(), std::make_move_iterator(oBedDefinitions.begin()), std::make_move_iterator(oBedDefinitions.end()));
     oSubElements.insert(oSubElements.end(), std::make_move_iterator(oObjectDefinitions.begin()), std::make_move_iterator(oObjectDefinitions.end()));
 
-    // Write subelements to Atmos IABFrame
+    // Write subelements to DCP IABFrame
     oIABFrame->SetSubElements(oSubElements);
 
-    // Pack Atmos IABFrame and output
+    // Pack DCP IABFrame and output
     packer->PackIABFrame();
     packer->GetPackedBuffer(oOutputBuffer, oOutputLength);
 
