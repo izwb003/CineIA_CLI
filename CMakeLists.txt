@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
-project(CineIA_CLI VERSION 0.2.1)
+project(CineIA_CLI VERSION 0.2.2)
 
 # Init CMake
 cmake_policy(SET CMP0048 NEW)
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_MACOSX_RPATH ON)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Include iab-renderer library
 add_subdirectory(external/iab-renderer)
