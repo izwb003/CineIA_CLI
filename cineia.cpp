@@ -22,6 +22,7 @@
 #include "cineia.h"
 
 // Because provided APIs of IABLib are too simple, we choose not to use them.
+#include <iostream>
 #include <parser/IABParser.h>
 #include <packer/IABPacker.h>
 #include <common/IABElements.h>

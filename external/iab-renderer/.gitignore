@@ -1,0 +1,18 @@
+# Local gitignore settings for project
+
+# Don't checkin any of the prebuilt stuff under external
+# external/*/
+*.a
+CMakeFiles
+# *.cmake
+*.swp
+*.wav
+*.raw
+*.dtsx
+a.out
+CMakeCache.txt
+# Makefile
+
+# Mac specific
+xcuserdata
+.DS_Store

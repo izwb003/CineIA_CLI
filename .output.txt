@@ -1,0 +1,527 @@
+warning: in the working copy of 'external/asdcplib/registers/dolby/ASDCP-PHDR-elements.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/ASDCP-PHDR-essence-keys.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/ASDCP-PHDR-groups.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/ASDCP-PHDR-labels.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/RDD47-ISXD-elements.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/RDD47-ISXD-essence-keys.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/RDD47-ISXD-groups.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/registers/dolby/RDD47-ISXD-labels.xml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/src/CMakeLists.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/win32/Makefile.common', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/asdcplib/win32/README.txt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/indicators/include/indicators/cursor_control.hpp', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'external/indicators/include/indicators/cursor_movement.hpp', CRLF will be replaced by LF the next time Git touches it
+[vcpkg 61049fa] Replace git submodules with vendored sources under external/; remove .gitmodules; update CMake for local builds and minor cast fix
+ 455 files changed, 165165 insertions(+), 64 deletions(-)
+ delete mode 100644 .gitmodules
+ create mode 100644 .idea/.gitignore
+ create mode 100644 .idea/CineIA_CLI.iml
+ create mode 100644 .idea/misc.xml
+ create mode 100644 .idea/modules.xml
+ create mode 100644 .idea/vcs.xml
+ create mode 100644 .output.txt
+ delete mode 160000 external/asdcplib
+ create mode 100644 external/asdcplib/.gitignore
+ create mode 100644 external/asdcplib/CHANGES
+ create mode 100644 external/asdcplib/CMakeLists.txt
+ create mode 100644 external/asdcplib/CONTRIBUTING.md
+ create mode 100644 external/asdcplib/COPYING
+ create mode 100644 external/asdcplib/Makefile.am
+ create mode 100644 external/asdcplib/README.cmake
+ create mode 100644 external/asdcplib/README.md
+ create mode 100644 external/asdcplib/configure.ac
+ create mode 100644 external/asdcplib/m4/ax_lib_expat.m4
+ create mode 100644 external/asdcplib/m4/ax_lib_openssl.m4
+ create mode 100644 external/asdcplib/m4/ax_lib_xerces.m4
+ create mode 100644 external/asdcplib/registers/dolby/ASDCP-PHDR-elements.xml
+ create mode 100644 external/asdcplib/registers/dolby/ASDCP-PHDR-essence-keys.xml
+ create mode 100644 external/asdcplib/registers/dolby/ASDCP-PHDR-groups.xml
+ create mode 100644 external/asdcplib/registers/dolby/ASDCP-PHDR-labels.xml
+ create mode 100644 external/asdcplib/registers/dolby/RDD47-ISXD-elements.xml
+ create mode 100644 external/asdcplib/registers/dolby/RDD47-ISXD-essence-keys.xml
+ create mode 100644 external/asdcplib/registers/dolby/RDD47-ISXD-groups.xml
+ create mode 100644 external/asdcplib/registers/dolby/RDD47-ISXD-labels.xml
+ create mode 100644 external/asdcplib/registers/readme.md
+ create mode 100644 external/asdcplib/src/ACES.cpp
+ create mode 100644 external/asdcplib/src/ACES.h
+ create mode 100644 external/asdcplib/src/ACES_Codestream_Parser.cpp
+ create mode 100644 external/asdcplib/src/ACES_Sequence_Parser.cpp
+ create mode 100644 external/asdcplib/src/AS_02.h
+ create mode 100644 external/asdcplib/src/AS_02_ACES.cpp
+ create mode 100644 external/asdcplib/src/AS_02_ACES.h
+ create mode 100644 external/asdcplib/src/AS_02_IAB.cpp
+ create mode 100644 external/asdcplib/src/AS_02_IAB.h
+ create mode 100644 external/asdcplib/src/AS_02_ISXD.cpp
+ create mode 100644 external/asdcplib/src/AS_02_JP2K.cpp
+ create mode 100644 external/asdcplib/src/AS_02_PCM.cpp
+ create mode 100644 external/asdcplib/src/AS_02_PHDR.cpp
+ create mode 100644 external/asdcplib/src/AS_02_PHDR.h
+ create mode 100644 external/asdcplib/src/AS_02_TimedText.cpp
+ create mode 100644 external/asdcplib/src/AS_02_internal.h
+ create mode 100644 external/asdcplib/src/AS_DCP.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP.h
+ create mode 100644 external/asdcplib/src/AS_DCP_AES.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_ATMOS.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_DCData.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_DCData_internal.h
+ create mode 100644 external/asdcplib/src/AS_DCP_JP2K.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_MPEG2.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_MXF.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_PCM.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_TimedText.cpp
+ create mode 100644 external/asdcplib/src/AS_DCP_internal.h
+ create mode 100644 external/asdcplib/src/AtmosSyncChannel_Generator.cpp
+ create mode 100644 external/asdcplib/src/AtmosSyncChannel_Generator.h
+ create mode 100644 external/asdcplib/src/AtmosSyncChannel_Mixer.cpp
+ create mode 100644 external/asdcplib/src/AtmosSyncChannel_Mixer.h
+ create mode 100644 external/asdcplib/src/CMakeLists.txt
+ create mode 100644 external/asdcplib/src/CRC16.c
+ create mode 100644 external/asdcplib/src/CRC16.h
+ create mode 100644 external/asdcplib/src/DCData_ByteStream_Parser.cpp
+ create mode 100644 external/asdcplib/src/DCData_Sequence_Parser.cpp
+ create mode 100644 external/asdcplib/src/Dict.cpp
+ create mode 100644 external/asdcplib/src/Index.cpp
+ create mode 100644 external/asdcplib/src/JP2K.cpp
+ create mode 100644 external/asdcplib/src/JP2K.h
+ create mode 100644 external/asdcplib/src/JP2K_Codestream_Parser.cpp
+ create mode 100644 external/asdcplib/src/JP2K_Sequence_Parser.cpp
+ create mode 100644 external/asdcplib/src/KLV.cpp
+ create mode 100644 external/asdcplib/src/KLV.h
+ create mode 100644 external/asdcplib/src/KM_error.h
+ create mode 100644 external/asdcplib/src/KM_fileio.cpp
+ create mode 100644 external/asdcplib/src/KM_fileio.h
+ create mode 100644 external/asdcplib/src/KM_log.cpp
+ create mode 100644 external/asdcplib/src/KM_log.h
+ create mode 100644 external/asdcplib/src/KM_memio.h
+ create mode 100644 external/asdcplib/src/KM_mutex.h
+ create mode 100644 external/asdcplib/src/KM_platform.h
+ create mode 100644 external/asdcplib/src/KM_prng.cpp
+ create mode 100644 external/asdcplib/src/KM_prng.h
+ create mode 100644 external/asdcplib/src/KM_tai.cpp
+ create mode 100644 external/asdcplib/src/KM_tai.h
+ create mode 100644 external/asdcplib/src/KM_util.cpp
+ create mode 100644 external/asdcplib/src/KM_util.h
+ create mode 100644 external/asdcplib/src/KM_xml.cpp
+ create mode 100644 external/asdcplib/src/KM_xml.h
+ create mode 100644 external/asdcplib/src/MDD.cpp
+ create mode 100644 external/asdcplib/src/MDD.h
+ create mode 100644 external/asdcplib/src/MPEG.cpp
+ create mode 100644 external/asdcplib/src/MPEG.h
+ create mode 100644 external/asdcplib/src/MPEG2_Parser.cpp
+ create mode 100644 external/asdcplib/src/MXF.cpp
+ create mode 100644 external/asdcplib/src/MXF.h
+ create mode 100644 external/asdcplib/src/MXFTypes.cpp
+ create mode 100644 external/asdcplib/src/MXFTypes.h
+ create mode 100644 external/asdcplib/src/Makefile.am
+ create mode 100644 external/asdcplib/src/Metadata.cpp
+ create mode 100644 external/asdcplib/src/Metadata.h
+ create mode 100644 external/asdcplib/src/PCMDataProviders.cpp
+ create mode 100644 external/asdcplib/src/PCMDataProviders.h
+ create mode 100644 external/asdcplib/src/PCMParserList.cpp
+ create mode 100644 external/asdcplib/src/PCMParserList.h
+ create mode 100644 external/asdcplib/src/PCM_Parser.cpp
+ create mode 100644 external/asdcplib/src/PHDR_Sequence_Parser.cpp
+ create mode 100644 external/asdcplib/src/S12MTimecode.h
+ create mode 100644 external/asdcplib/src/ST2052_TextParser.cpp
+ create mode 100644 external/asdcplib/src/ST2095_PinkNoise.cpp
+ create mode 100644 external/asdcplib/src/ST2095_PinkNoise.h
+ create mode 100644 external/asdcplib/src/SyncCommon.h
+ create mode 100644 external/asdcplib/src/SyncEncoder.c
+ create mode 100644 external/asdcplib/src/SyncEncoder.h
+ create mode 100644 external/asdcplib/src/TimedText_Parser.cpp
+ create mode 100644 external/asdcplib/src/UUIDInformation.c
+ create mode 100644 external/asdcplib/src/UUIDInformation.h
+ create mode 100644 external/asdcplib/src/Wav.cpp
+ create mode 100644 external/asdcplib/src/Wav.h
+ create mode 100644 external/asdcplib/src/WavFileWriter.h
+ create mode 100644 external/asdcplib/src/as-02-info.cpp
+ create mode 100644 external/asdcplib/src/as-02-unwrap.cpp
+ create mode 100644 external/asdcplib/src/as-02-wrap.cpp
+ create mode 100644 external/asdcplib/src/asdcp-info.cpp
+ create mode 100644 external/asdcplib/src/asdcp-mem-test.cpp
+ create mode 100644 external/asdcplib/src/asdcp-test.cpp
+ create mode 100644 external/asdcplib/src/asdcp-unwrap.cpp
+ create mode 100644 external/asdcplib/src/asdcp-util.cpp
+ create mode 100644 external/asdcplib/src/asdcp-version.cpp
+ create mode 100644 external/asdcplib/src/asdcp-wrap.cpp
+ create mode 100644 external/asdcplib/src/blackwave.cpp
+ create mode 100644 external/asdcplib/src/dirent_win.h
+ create mode 100644 external/asdcplib/src/fips-186-rng-test.cpp
+ create mode 100644 external/asdcplib/src/fips-186-test-harness.pl
+ create mode 100644 external/asdcplib/src/gen-tst.sh
+ create mode 100644 external/asdcplib/src/h__02_Reader.cpp
+ create mode 100644 external/asdcplib/src/h__02_Writer.cpp
+ create mode 100644 external/asdcplib/src/h__Reader.cpp
+ create mode 100644 external/asdcplib/src/h__Writer.cpp
+ create mode 100644 external/asdcplib/src/info.in
+ create mode 100644 external/asdcplib/src/j2c-test.cpp
+ create mode 100644 external/asdcplib/src/jp2k-crypt-tst.sh
+ create mode 100644 external/asdcplib/src/jp2k-stereo-crypt-tst.sh
+ create mode 100644 external/asdcplib/src/jp2k-stereo-tst.sh
+ create mode 100644 external/asdcplib/src/jp2k-tst.sh
+ create mode 100644 external/asdcplib/src/klvsplit.cpp
+ create mode 100644 external/asdcplib/src/klvwalk.cpp
+ create mode 100644 external/asdcplib/src/kmfilegen.cpp
+ create mode 100644 external/asdcplib/src/kmrandgen.cpp
+ create mode 100644 external/asdcplib/src/kmuuidgen.cpp
+ create mode 100644 external/asdcplib/src/mpeg-crypt-tst.sh
+ create mode 100644 external/asdcplib/src/mpeg-tst.sh
+ create mode 100644 external/asdcplib/src/path-test.cpp
+ create mode 100644 external/asdcplib/src/phdr-unwrap.cpp
+ create mode 100644 external/asdcplib/src/phdr-wrap.cpp
+ create mode 100644 external/asdcplib/src/pinkwave.cpp
+ create mode 100644 external/asdcplib/src/rng-tst.sh
+ create mode 100644 external/asdcplib/src/wav-crypt-tst.sh
+ create mode 100644 external/asdcplib/src/wav-tst.sh
+ create mode 100644 external/asdcplib/src/wavesplit.cpp
+ create mode 100644 external/asdcplib/win32/Makefile.am
+ create mode 100644 external/asdcplib/win32/Makefile.common
+ create mode 100644 external/asdcplib/win32/Makefile32.wmk
+ create mode 100644 external/asdcplib/win32/Makefile64.wmk
+ create mode 100644 external/asdcplib/win32/README.txt
+ delete mode 160000 external/iab-renderer
+ create mode 100644 external/iab-renderer/.gitignore
+ create mode 100644 external/iab-renderer/CMakeLists.txt
+ create mode 100644 external/iab-renderer/LICENSE
+ create mode 100644 external/iab-renderer/README.md
+ create mode 100644 external/iab-renderer/configurations/IABSDK-9-1-6_2021-09-15.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IABTesting-11-1-4.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IABTesting-9-1-6.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c11.1HT.array.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c13.1HT.array.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c2.0.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c5.1.4.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c5.1.array.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c7.1.4.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c7.1.array.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c7.1SDS.array.vbap.cfg
+ create mode 100644 external/iab-renderer/configurations/IAB_c9.1OH.array.vbap.cfg
+ create mode 100644 external/iab-renderer/include/IABDataTypes.h
+ create mode 100644 external/iab-renderer/include/IABElementsAPI.h
+ create mode 100644 external/iab-renderer/include/IABErrors.h
+ create mode 100644 external/iab-renderer/include/IABPackerAPI.h
+ create mode 100644 external/iab-renderer/include/IABParserAPI.h
+ create mode 100644 external/iab-renderer/include/IABRendererAPI.h
+ create mode 100644 external/iab-renderer/include/IABUtilities.h
+ create mode 100644 external/iab-renderer/include/IABValidatorAPI.h
+ create mode 100644 external/iab-renderer/include/IABVersion.h
+ create mode 100644 external/iab-renderer/src/apps/RendererExample/RenderIABToFiles.cpp
+ create mode 100644 external/iab-renderer/src/apps/RendererExample/RenderIABToFiles.h
+ create mode 100644 external/iab-renderer/src/apps/RendererExample/main.cpp
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCAudioData.cpp
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCAudioData.h
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCCodec.h
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCFullDecoder.cpp
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCFullDecoder.h
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCSimpleEncoder.cpp
+ create mode 100644 external/iab-renderer/src/lib/DLC/DLCSimpleEncoder.h
+ create mode 100644 external/iab-renderer/src/lib/common/IABConstants.h
+ create mode 100644 external/iab-renderer/src/lib/common/IABElements.cpp
+ create mode 100644 external/iab-renderer/src/lib/common/IABElements.h
+ create mode 100644 external/iab-renderer/src/lib/common/IABUtilities.cpp
+ create mode 100644 external/iab-renderer/src/lib/common/nullptrOldCompilers.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamIOHelpers.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamReaderT.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamReaderT.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamStateT.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamStateT.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamWriterT.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bitstream/BitStreamWriterT.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamIOHelpers.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamReaderT.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamReaderT.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamStateT.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamStateT.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamWriterT.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/bytestream/ByteStreamWriterT.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/hash/CRC16.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/hash/CRC16.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/hash/CRCGenerator.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/hash/HashGenerator.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/hash/MD5Generator.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/hash/MD5Generator.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/rawstream/RawIStream.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/rawstream/RawIStream.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/rawstream/RawOStream.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/rawstream/RawOStream.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/rawstream/RawStream.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/rawstream/RawStream.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/stream/StreamBasicTypes.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/stream/StreamDefines.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/stream/StreamDefines.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/stream/StreamTypes.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/stream/StreamTypes.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/ByteSwap.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/ByteSwap.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/Namespace.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/PCMUtilities.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/StringUtils.cpp
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/StringUtils.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/iitersbuf.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/opbacksbuf.h
+ create mode 100644 external/iab-renderer/src/lib/commonstream/utils/rawbuf.h
+ create mode 100644 external/iab-renderer/src/lib/coreutils/CoreDefines.h
+ create mode 100644 external/iab-renderer/src/lib/coreutils/Matrix3.cpp
+ create mode 100644 external/iab-renderer/src/lib/coreutils/Matrix3.h
+ create mode 100644 external/iab-renderer/src/lib/coreutils/VectDSP.cpp
+ create mode 100644 external/iab-renderer/src/lib/coreutils/VectDSP.h
+ create mode 100644 external/iab-renderer/src/lib/coreutils/VectDSPInterface.h
+ create mode 100644 external/iab-renderer/src/lib/coreutils/VectDSPMacAccelerate.cpp
+ create mode 100644 external/iab-renderer/src/lib/coreutils/VectDSPMacAccelerate.h
+ create mode 100644 external/iab-renderer/src/lib/coreutils/Vector3.cpp
+ create mode 100644 external/iab-renderer/src/lib/coreutils/Vector3.h
+ create mode 100644 external/iab-renderer/src/lib/packer/IABPacker.cpp
+ create mode 100644 external/iab-renderer/src/lib/packer/IABPacker.h
+ create mode 100644 external/iab-renderer/src/lib/parser/IABParser.cpp
+ create mode 100644 external/iab-renderer/src/lib/parser/IABParser.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/ChannelGainsProcessor/ChannelGainsProcessor.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/ChannelGainsProcessor/ChannelGainsProcessor.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABConfigTables.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABConfigTables.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABDecorrelation/IABDecorrelation.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABDecorrelation/IABDecorrelation.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABInterior/IABInterior.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABInterior/IABInterior.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABObjectZones/IABObjectZones.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABObjectZones/IABObjectZones.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABRenderer.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABRenderer.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABRendererMT.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABRendererMT.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABTransform/IABTransform.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABTransform/IABTransform.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABTransform/IABTransformDataType.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/IABTransform/MDAToIABCoordCvtConsts.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/VBAPRenderer/VBAPRenderer.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/VBAPRenderer/VBAPRenderer.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/VBAPRenderer/VBAPRendererDataStructures.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderer/VBAPRenderer/VBAPRendererDataStructures.h
+ create mode 100644 external/iab-renderer/src/lib/renderer/VBAPRenderer/VBAPRendererErrors.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/IRendererConfiguration.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RenderPatch.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RenderPatch.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RenderSpeaker.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RenderSpeaker.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RendererConfigErrors.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RendererConfigUtils.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RendererConfigUtils.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RendererConfigurationFile.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderutils/RendererConfigurationFile.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/Utils.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderutils/Utils.h
+ create mode 100644 external/iab-renderer/src/lib/renderutils/VirtualSources.cpp
+ create mode 100644 external/iab-renderer/src/lib/renderutils/VirtualSources.h
+ create mode 100644 external/iab-renderer/src/lib/waveutils/WaveIO.cpp
+ create mode 100644 external/iab-renderer/src/lib/waveutils/WaveIO.h
+ create mode 100644 external/iab-renderer/tests/CMakeLists.txt
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/CPUTime.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/CPUTime.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/DLCDecPerformanceUtils.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/DLCDecPerformanceUtils.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/DecodePerformanceUtils.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/DecodePerformanceUtils.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/IABMaxComplexityFrame.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/IABMaxComplexityFrame.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/ParserPerformanceUtils.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/ParserPerformanceUtils.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/RendererPerformanceUtils.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/RendererPerformanceUtils.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/TestConstants.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/TestUtils.cpp
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/TestUtils.h
+ create mode 100644 external/iab-renderer/tests/Performance_Tests/main.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/DLC/DLCAudioDataTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/DLC/DLCPCMResidualsSubBlockTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/DLC/DLCPredRegionTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/DLC/DLCRiceResidualTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/DLC/DLCRiceResidualsSubBlockTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/DLC/DLCSimpleEncoderFullDecoderTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABAuthoringToolInfoTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABBedDefinitionTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABBedRemapTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABChannelTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABFrameTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABInteriorTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABObjectDefinitionTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABObjectSubBlockTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABObjectZone19Tests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABPCMElementTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABPackerParserTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABRenderFrameTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABRendererObjectZoneTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABSubFrameTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABTransformTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABUserDataTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABVBAPCoordinatesTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABVBAPExtendedSourceTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABVBAPLFETests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABVBAPObjectTests.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/IAB/IABVBAPRendererAPITest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitByte_ReadWriteTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitStreamReader_PeekTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitStreamReader_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitStream_CheckParameters.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitStream_ReadWriteTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitStream_SyncTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/BitStream_TypesTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/ByteStream_CheckParameters.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/ByteStream_ReadWriteTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/ByteStream_SyncTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/ByteStream_TypesTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/CRC16Generator_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/MD5Generator_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/Optional_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/Plex_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/ReadWriteBuffer_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/Stream_TypesTest.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/commonstream/UTF8_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/coreutils/VectDSP_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/renderutils/RenderSpeaker_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/renderutils/RendererConfiguration_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/renderutils/VirtualSourceTree_Test.cpp
+ create mode 100644 external/iab-renderer/tests/Unit_Tests/renderutils/testConfig.h
+ create mode 100644 external/iab-renderer/tests/scripts/alt_pyra-mesa_not_used/generate.m
+ create mode 100644 external/iab-renderer/tests/scripts/alt_pyra-mesa_not_used/patches.csv
+ create mode 100644 external/iab-renderer/tests/scripts/alt_pyra-mesa_not_used/vertices.csv
+ create mode 100644 external/iab-renderer/tests/scripts/interior_to_normobjects_ref_generate/interior_to_norm_objects_ref_generate.m
+ create mode 100644 external/iab-renderer/tests/scripts/lpf_96kDLC_design/DLC96k-LPF-response.png
+ create mode 100644 external/iab-renderer/tests/scripts/lpf_96kDLC_design/FIR-LPF-DLC-96kHz.fda
+ create mode 100644 external/iab-renderer/tests/scripts/lpf_96kDLC_design/FIR-LPF-DLC-96kHz.h
+ create mode 100644 external/iab-renderer/tests/scripts/mda_to_iab_tables_generate/script/generate.m
+ create mode 100644 external/iab-renderer/tests/scripts/mda_to_iab_tables_generate/script/vertices.csv
+ create mode 100644 external/iab-renderer/tests/scripts/transform_UT_ref_generate/transform_UT_ref_generate.m
+ create mode 100644 external/iab-renderer/tests/test_data/testcfg.h
+ delete mode 160000 external/indicators
+ create mode 100644 external/indicators/.appveyor.yml
+ create mode 100644 external/indicators/.clang-format
+ create mode 100644 external/indicators/.gitignore
+ create mode 100644 external/indicators/.travis.yml
+ create mode 100644 external/indicators/CMakeLists.txt
+ create mode 100644 external/indicators/CONTRIBUTING.md
+ create mode 100644 external/indicators/LICENSE
+ create mode 100644 external/indicators/LICENSE.termcolor
+ create mode 100644 external/indicators/README.md
+ create mode 100755 external/indicators/clang-format.bash
+ create mode 100644 external/indicators/conanfile.py
+ create mode 100644 external/indicators/demo/.gitignore
+ create mode 100644 external/indicators/demo/CMakeLists.txt
+ create mode 100644 external/indicators/demo/Makefile
+ create mode 100644 external/indicators/demo/demo.cpp
+ create mode 100644 external/indicators/img/block_progress_bar.gif
+ create mode 100644 external/indicators/img/block_progress_bar_iterable.gif
+ create mode 100644 external/indicators/img/demo.gif
+ create mode 100644 external/indicators/img/dynamic_progress_bar.gif
+ create mode 100644 external/indicators/img/dynamic_progress_bar_hide_completed.gif
+ create mode 100644 external/indicators/img/indeterminate_progress_bar.gif
+ create mode 100644 external/indicators/img/logo.png
+ create mode 100644 external/indicators/img/multi_progress.gif
+ create mode 100644 external/indicators/img/progress_bar_countdown.gif
+ create mode 100644 external/indicators/img/progress_bar_set_progress.gif
+ create mode 100644 external/indicators/img/progress_bar_tick.gif
+ create mode 100644 external/indicators/img/progress_spinner.gif
+ create mode 100644 external/indicators/img/time_meter.gif
+ create mode 100644 external/indicators/img/unicode.gif
+ create mode 100644 external/indicators/include/indicators/block_progress_bar.hpp
+ create mode 100644 external/indicators/include/indicators/color.hpp
+ create mode 100644 external/indicators/include/indicators/cursor_control.hpp
+ create mode 100644 external/indicators/include/indicators/cursor_movement.hpp
+ create mode 100644 external/indicators/include/indicators/details/stream_helper.hpp
+ create mode 100644 external/indicators/include/indicators/display_width.hpp
+ create mode 100644 external/indicators/include/indicators/dynamic_progress.hpp
+ create mode 100644 external/indicators/include/indicators/font_style.hpp
+ create mode 100644 external/indicators/include/indicators/indeterminate_progress_bar.hpp
+ create mode 100644 external/indicators/include/indicators/multi_progress.hpp
+ create mode 100644 external/indicators/include/indicators/progress_bar.hpp
+ create mode 100644 external/indicators/include/indicators/progress_spinner.hpp
+ create mode 100644 external/indicators/include/indicators/progress_type.hpp
+ create mode 100644 external/indicators/include/indicators/setting.hpp
+ create mode 100644 external/indicators/include/indicators/termcolor.hpp
+ create mode 100644 external/indicators/include/indicators/terminal_size.hpp
+ create mode 100644 external/indicators/indicators.pc.in
+ create mode 100644 external/indicators/indicatorsConfig.cmake.in
+ create mode 100644 external/indicators/samples/CMakeLists.txt
+ create mode 100644 external/indicators/samples/block_progress_bar.cpp
+ create mode 100644 external/indicators/samples/block_progress_bar_iterable.cpp
+ create mode 100644 external/indicators/samples/dynamic_postfix_text.cpp
+ create mode 100644 external/indicators/samples/dynamic_progress.cpp
+ create mode 100644 external/indicators/samples/indeterminate_progress_bar.cpp
+ create mode 100644 external/indicators/samples/max_progress.cpp
+ create mode 100644 external/indicators/samples/multi_block_progress_bar.cpp
+ create mode 100644 external/indicators/samples/multi_progress_bar.cpp
+ create mode 100644 external/indicators/samples/multi_threaded_bar.cpp
+ create mode 100644 external/indicators/samples/progress_bar_countdown.cpp
+ create mode 100644 external/indicators/samples/progress_bar_set_progress.cpp
+ create mode 100644 external/indicators/samples/progress_bar_sstream.cpp
+ create mode 100644 external/indicators/samples/progress_bar_tick.cpp
+ create mode 100644 external/indicators/samples/progress_bar_unicode.cpp
+ create mode 100644 external/indicators/samples/progress_spinner.cpp
+ create mode 100644 external/indicators/samples/time_meter.cpp
+ create mode 100644 external/indicators/single_include.json
+ create mode 100644 external/indicators/single_include/indicators/indicators.hpp
+ create mode 100644 external/indicators/utils/amalgamate/CHANGES.md
+ create mode 100644 external/indicators/utils/amalgamate/LICENSE.md
+ create mode 100644 external/indicators/utils/amalgamate/README.md
+ create mode 100644 external/indicators/utils/amalgamate/amalgamate.py
+ create mode 100644 external/indicators/utils/amalgamate/config.json
+ create mode 100644 vcpkg.json
+-- Running vcpkg install
+Detecting compiler hash for triplet x64-linux...
+Compiler found: /usr/bin/c++
+The following packages are already installed:
+  * libiconv:x64-linux@1.18#3
+    openssl:x64-linux@3.6.0#3
+  * vcpkg-cmake:x64-linux@2024-04-23
+  * vcpkg-cmake-config:x64-linux@2024-05-23
+  * vcpkg-cmake-get-vars:x64-linux@2025-05-29
+    xerces-c[core,network]:x64-linux@3.3.0
+openssl is compatible with built-in CMake targets:
+  find_package(OpenSSL REQUIRED)
+  target_link_libraries(main PRIVATE OpenSSL::SSL)
+  target_link_libraries(main PRIVATE OpenSSL::Crypto)
+The package xerces-c is compatible with built-in CMake targets:
+    find_package(XercesC REQUIRED)
+    target_link_libraries(main PRIVATE XercesC::XercesC)
+All requested installations completed successfully in: 39.4 us
+-- Running vcpkg install - done
+-- The CXX compiler identification is GNU 14.2.0
+-- The C compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++-14 - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc-14 - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE)
+-- Found Python: /home/linuxbrew/.linuxbrew/bin/python3 (found version "3.14.1") found components: Interpreter
+-- Version Number is 2.10.38
+-- Found OpenSSL: /home/user/CLionProjects/CineIA_CLI/cmake-build-release/vcpkg_installed/x64-linux/lib/libcrypto.a (found version "3.6.0")
+-- Building with encryption support
+-- Building with XML parse support
+-- Configuring done (3.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/user/CLionProjects/CineIA_CLI/cmake-build-release
+[0/2] Re-checking globbed directories...
+[19/147] Building CXX object external/...nit_Tests/IAB/IABDLCElementTests.cpp.o
+FAILED: external/iab-renderer/tests/CMakeFiles/IABDLCElementTests.dir/Unit_Tests/IAB/IABDLCElementTests.cpp.o
+/usr/bin/g++-14  -I/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/include -I/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/src/lib -I/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/test_data -isystem /home/user/CLionProjects/CineIA_CLI/cmake-build-release/_deps/googletest-src/googletest/include -isystem /home/user/CLionProjects/CineIA_CLI/cmake-build-release/_deps/googletest-src/googletest -O3 -DNDEBUG -O2 -fvisibility=hidden -fstack-protector-strong -Wunreachable-code -Wno-attributes -Werror=return-type -pedantic -std=gnu++20 -fdiagnostics-color=always -MD -MT external/iab-renderer/tests/CMakeFiles/IABDLCElementTests.dir/Unit_Tests/IAB/IABDLCElementTests.cpp.o -MF external/iab-renderer/tests/CMakeFiles/IABDLCElementTests.dir/Unit_Tests/IAB/IABDLCElementTests.cpp.o.d -o external/iab-renderer/tests/CMakeFiles/IABDLCElementTests.dir/Unit_Tests/IAB/IABDLCElementTests.cpp.o -c /home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp
+/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp: In member function ‘void {anonymous}::IABDLCElement_Test::RunSerializeDeSerializeTestCase()’:
+/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp:260:28: error: ‘streampos’ is not a member of ‘std::ios_base’
+  260 |             std::ios_base::streampos pos = elementBuffer.tellg();
+      |                            ^~~~~~~~~
+/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp:262:80: error: ‘pos’ was not declared in this scope; did you mean ‘pow’?
+  262 |             IABElementSizeType bytesInStream = static_cast<IABElementSizeType>(pos);
+      |                                                                                ^~~
+      |                                                                                pow
+/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp:302:28: error: ‘streampos’ is not a member of ‘std::ios_base’
+  302 |             std::ios_base::streampos readerPos = elementReader.streamPosition();
+      |                            ^~~~~~~~~
+/home/user/CLionProjects/CineIA_CLI/external/iab-renderer/tests/Unit_Tests/IAB/IABDLCElementTests.cpp:304:61: error: ‘readerPos’ was not declared in this scope
+  304 |             bytesInStream = static_cast<IABElementSizeType>(readerPos);
+      |                                                             ^~~~~~~~~
+[20/147] Building CXX object external/...r/Unit_Tests/IAB/IABChannelTests.cpp.o
+ninja: build stopped: subcommand failed.

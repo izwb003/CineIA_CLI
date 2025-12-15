@@ -29,6 +29,7 @@
 #include <indicators/cursor_control.hpp>
 
 #include "cineia.h"
+#include <limits>
 
 // AS-DCP Program information
 static const byte_t productUUID[ASDCP::UUIDlen] =
@@ -37,9 +38,9 @@ static const byte_t productUUID[ASDCP::UUIDlen] =
          0xDB, 0x81, 0xC0, 0xDF,
          0x9E, 0x61, 0x8C, 0x3F};
 static const std::string companyName = "CineIA "
-        + std::to_string(PROJECT_VERSION_MAJOR)
-        + "." + std::to_string(PROJECT_VERSION_MINOR)
-        + "." + std::to_string(PROJECT_VERSION_PATCH);
+                                       + std::to_string(PROJECT_VERSION_MAJOR)
+                                       + "." + std::to_string(PROJECT_VERSION_MINOR)
+                                       + "." + std::to_string(PROJECT_VERSION_PATCH);
 static const std::string productName = "asdcplib";
 static const std::string productVersion = ASDCP::Version();
 
@@ -67,13 +68,6 @@ void showProgramInfo() {
     printf("\t\t\tCopyright (c) 2025 @izwb003, @Shino_Rize, @Connor\n");
     printf("\t\tPowered by IABLib and AS-DCP. Run \"cineia -l\" for more information.\n\n");
     printf(RED" Warning:" NONE);
-    printf(" THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n"
-           " OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
-           " FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n"
-           " AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
-           " LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
-           " OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
-           " SOFTWARE.\n");
     printf(YELLOW" Note:" NONE);
     printf(" CineIA is an IAB Application Profile 1 DCP IAB generator. It CANNOT replace\n"
            " a Dolby Atmos® Cinema MXF generator's work, although they are compatible. \n"
@@ -208,12 +202,118 @@ struct cmdSettings {
     std::string outputFileName;
 };
 
+static void ensureMxfExtension(std::string &path) {
+    if(path.empty()) return;
+    if(path.length() < std::string(".mxf").length() ||
+       path.compare(path.length() - std::string(".mxf").length(),
+                    std::string(".mxf").length(), std::string(".mxf")) != 0) {
+        path.append(".mxf");
+    }
+}
+
+static bool promptInteractive(cmdSettings &settings) {
+    // Interactive prompt for users who launched the app without CLI args (e.g., double-click)
+    std::cout << "\nCineIA_CLI interactive mode. Enter parameters below (press Enter to accept defaults).\n";
+    std::cout << "You can run 'cineia -h' for full CLI usage when using a terminal.\n\n";
+
+    // Consume any leftover newline just in case
+    if(std::cin.peek() == '\n') std::cin.get();
+
+    std::string line;
+
+    // Input file
+    while (settings.inputFileName.empty()) {
+        std::cout << "Input IMF IAB file path (.mxf): ";
+        std::getline(std::cin, line);
+        // Trim spaces
+        line.erase(0, line.find_first_not_of(' '));
+        line.erase(line.find_last_not_of(' ') + 1);
+        if(line.empty()) {
+            std::cout << "Please enter a valid path.\n";
+            continue;
+        }
+        settings.inputFileName = line;
+        ensureMxfExtension(settings.inputFileName);
+    }
+
+    // Output file
+    while (settings.outputFileName.empty()) {
+        std::cout << "Output DCP IAB file path (.mxf): ";
+        std::getline(std::cin, line);
+        line.erase(0, line.find_first_not_of(' '));
+        line.erase(line.find_last_not_of(' ') + 1);
+        if(line.empty()) {
+            std::cout << "Please enter a valid path.\n";
+            continue;
+        }
+        settings.outputFileName = line;
+        ensureMxfExtension(settings.outputFileName);
+
+        if(isFileExists(settings.outputFileName)) {
+            std::cout << "Output file " << settings.outputFileName << " already exists. Overwrite? (Y/N):";
+            char ans = '\0';
+            std::cin >> ans;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if(ans != 'Y' && ans != 'y') {
+                // reset to force re-prompt for a different name
+                settings.outputFileName.clear();
+                std::cout << "Please enter a different output path.\n";
+            }
+        }
+    }
+
+    // copyPreambleValue toggle
+    std::cout << "Copy PreambleValue from IMF to output? [Y/n] (default: Y): ";
+    std::getline(std::cin, line);
+    if(!line.empty()) {
+        if(line == "n" || line == "N" || line == "no" || line == "No" || line == "NO")
+            settings.copyPreambleValue = false;
+    }
+
+    // forceDolbyConstraint toggle
+    std::cout << "Force Dolby constraint if needed? [y/N] (default: N): ";
+    std::getline(std::cin, line);
+    if(!line.empty()) {
+        if(line == "y" || line == "Y" || line == "yes" || line == "Yes" || line == "YES")
+            settings.forceDolbyConstraint = true;
+    }
+
+    // bedChannelCount
+    std::cout << "Bed channel count (default 10): ";
+    std::getline(std::cin, line);
+    if(!line.empty()) {
+        try {
+            int v = std::stoi(line);
+            if(v > 0 && v < 1000) settings.bedChannelCount = static_cast<ui16_t>(v);
+            else std::cout << "Invalid value, keep default: " << settings.bedChannelCount << "\n";
+        }
+        catch(...) {
+            std::cout << "Invalid value, keep default: " << settings.bedChannelCount << "\n";
+        }
+    }
+
+    // objectCount
+    std::cout << "Object count (default 118): ";
+    std::getline(std::cin, line);
+    if(!line.empty()) {
+        try {
+            int v = std::stoi(line);
+            if(v > 0 && v < 2000) settings.objectCount = static_cast<ui16_t>(v);
+            else std::cout << "Invalid value, keep default: " << settings.objectCount << "\n";
+        }
+        catch(...) {
+            std::cout << "Invalid value, keep default: " << settings.objectCount << "\n";
+        }
+    }
+
+    return true;
+}
+
 bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings) {
     if(argc == 1) {
-        fprintf(stderr, RED" Error:" NONE);
-        fprintf(stderr, " No command line parameters were read.\n");
-        fprintf(stderr, " \tRun \"cineia -h\" or \"cineia --help\" for help.\n");
-        return false;
+        // No CLI args: enter interactive mode to allow users to input parameters when app is started by double-click
+        std::cout << "No command line parameters were read. Switching to interactive mode...\n";
+        return promptInteractive(settings);
     }
 
     for(int parseCmd = 1; parseCmd < argc; parseCmd ++) {
@@ -295,7 +395,7 @@ bool parseCommandLineOptions(int argc, const char* argv[], cmdSettings &settings
     if(settings.inputFileName.empty() || settings.outputFileName.empty()) {
         fprintf(stderr, RED" Error:" NONE);
         fprintf(stderr, " No input or output file specified.\n"
-               " \tBoth must be specified simultaneously.\n");
+                        " \tBoth must be specified simultaneously.\n");
         return false;
     }
     return true;
@@ -461,32 +561,37 @@ int main(int argc, const char* argv[]) {
 
     // Build a progress bar
     indicators::show_console_cursor(false);
+
     indicators::ProgressBar bar{
-        indicators::option::BarWidth{40},
-        indicators::option::Start{"["},
-        indicators::option::Fill{"="},
-        indicators::option::Lead{"="},
-        indicators::option::Remainder{" "},
-        indicators::option::End{"]"},
-        indicators::option::ForegroundColor{indicators::Color::green},
-        indicators::option::ShowElapsedTime{true},
-        indicators::option::ShowRemainingTime{true},
-        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
-        indicators::option::MaxProgress{frameCount}
+            indicators::option::BarWidth{50},
+            indicators::option::Start{" ["},
+            indicators::option::Fill{"#"},
+            indicators::option::Lead{"#"},
+            indicators::option::Remainder{"-"},
+            indicators::option::End{"]"},
+            indicators::option::PrefixText{"Converting "},
+            // Use std::cerr as the output stream so the bar updates in-place even when std::cout
+            // is captured by an IDE/CI and treated as non-interactive (causing new lines).
+            indicators::option::Stream{std::cerr},
+            indicators::option::ForegroundColor{indicators::Color::yellow},
+            indicators::option::ShowPercentage{true},
+            indicators::option::ShowElapsedTime{true},
+            indicators::option::ShowRemainingTime{true},
+            indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
+            indicators::option::MaxProgress{frameCount}
     };
 
     // Conversion
-    for(uint32_t frameNum = 0; frameNum < frameCount; frameNum ++) {
+    for(uint32_t frameNum = 0; frameNum < frameCount; frameNum++) {
         bar.set_option(indicators::option::PostfixText{
                 "Frame: " + std::to_string(frameNum + 1) + "/" + std::to_string(frameCount)
                 + " Size: " + std::to_string(outputFileSize / 1000) + "KB"
         });
         if(frameNum + 1 == frameCount)
             bar.set_option(indicators::option::PostfixText{
-                "Completed. Size: " + std::to_string(outputFileSize / 1000) + "KB"
+                    "Completed. Size: " + std::to_string(outputFileSize / 1000) + "KB"
             });
         bar.tick();
-
         AS_02::IAB::MXFReader::Frame iFrameWrite;
         std::stringstream iFrameStreamWrite;
         std::vector<char> oFrameWrite;
@@ -501,7 +606,7 @@ int main(int argc, const char* argv[]) {
             return -4;
         }
 
-        iFrameStreamWrite.write((const char*)iFrameWrite.second, iFrameWrite.first);
+        iFrameStreamWrite.write(reinterpret_cast<const char*>(iFrameWrite.second), iFrameWrite.first);
 
         CineIA::iabError error = CineIA::kIABNoError;
         if(!settings.forceDolbyConstraint)
@@ -551,7 +656,7 @@ int main(int argc, const char* argv[]) {
         outputFileSize += oFrameWriteLength;
 
         oFrameBuffer.FrameNumber(frameNum);
-        oFrameBuffer.SetData((byte_t*)oFrameWrite.data(), oFrameWriteLength);
+        oFrameBuffer.SetData(reinterpret_cast<byte_t*>(oFrameWrite.data()), oFrameWriteLength);
         oFrameBuffer.Size(oFrameWriteLength);
         writer.WriteFrame(oFrameBuffer);
     }

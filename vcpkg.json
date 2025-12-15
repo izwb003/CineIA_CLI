@@ -1,0 +1,12 @@
+{
+  "name" : "cineia-cli",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "f5cbc726b123896eef77f5acc1b9047a28a0731e",
+  "dependencies" : [ {
+    "name" : "openssl",
+    "version>=" : "3.6.0#3"
+  }, {
+    "name" : "xerces-c",
+    "version>=" : "3.3.0"
+  } ]
+}
